@@ -1,0 +1,3 @@
+<resources><string name="widget_description">下一场赛道、比赛周末安排与近几场赛程，支持 2×2、4×2、4×4。</string>    <string name="widget_driver_description">我的关注车手肖像与积分，2×2。</string>
+    <string name="widget_standings_description">领先者与前三积分；扩展到 4×4 显示积分列表。</string>
+</resources>

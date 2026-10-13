@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- About icon silhouette adapted from HyperModifier ic_about_hypermodifier.xml. -->
+    <group android:scaleX="3.857142857" android:scaleY="3.857142857">
+        <path android:fillColor="#242424" android:pathData="M0,12 C0,7.8 0,5.7 0.82,4.08 C1.53,2.67 2.67,1.53 4.08,0.82 C5.7,0 7.8,0 12,0 H16 C20.2,0 22.3,0 23.92,0.82 C25.33,1.53 26.47,2.67 27.18,4.08 C28,5.7 28,7.8 28,12 V16 C28,20.2 28,22.3 27.18,23.92 C26.47,25.33 25.33,26.47 23.92,27.18 C22.3,28 20.2,28 16,28 H12 C7.8,28 5.7,28 4.08,27.18 C2.67,26.47 1.53,25.33 0.82,23.92 C0,22.3 0,20.2 0,16 Z" />
+    </group>
+    <group android:scaleX="0.82" android:scaleY="0.82" android:pivotX="54" android:pivotY="54">
+    <path android:fillColor="#F2F2F2" android:pathData="M35,33 H63 L59,42 H42 L38.5,50 H56 L52,59 H35 L28.5,75 H18 L35,33 Z" />
+    <path android:fillColor="#ED1131" android:pathData="M75,33 H88 L70,75 H57 L70,45 H62 L66,37 L75,33 Z" />
+    <path android:fillColor="#ED1131" android:pathData="M36,70 H41 L39,75 H34 Z M44,70 H49 L47,75 H42 Z M52,70 H55 L53,75 H50 Z" />
+    </group>
+</vector>

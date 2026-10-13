@@ -1,0 +1,79 @@
+{
+  "mercedes": {
+    "season": 2026,
+    "angle": "overhead",
+    "url": "https://media.formula1.com/image/upload/f_auto/q_auto/v1769071389/fom-website/2026/Mercedes/Mercedes-AMG%20F1%20W17%20E%20PERFORMANCE%20-%20KA%2012.jpg",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_mercedes.webp"
+  },
+  "ferrari": {
+    "season": 2026,
+    "angle": "overhead",
+    "url": "https://media.formula1.com/image/upload/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Ferrari/F678_still_f08_16_9_v10.webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_ferrari.webp"
+  },
+  "red_bull": {
+    "season": 2026,
+    "angle": "overhead",
+    "url": "https://media.formula1.com/image/upload/t_16by9Centre/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Red%20Bull/SI202601150724.webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_red_bull.webp"
+  },
+  "rb": {
+    "season": 2026,
+    "angle": "overhead",
+    "url": "https://media.formula1.com/image/upload/t_16by9Centre/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Racing%20Bulls%20(VCARB)/SI202601151062%20(1).webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_rb.webp"
+  },
+  "cadillac": {
+    "season": 2026,
+    "angle": "overhead",
+    "url": "https://media.formula1.com/image/upload/t_16by9Centre/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Cadillac/CadillacF1Team_2193_HiRes.jpg.webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_cadillac.webp"
+  },
+  "audi": {
+    "season": 2026,
+    "angle": "high-angle",
+    "url": "https://media.formula1.com/image/upload/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Audi/16x9%20single%20image%20(34).webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_audi.webp"
+  },
+  "williams": {
+    "season": 2026,
+    "angle": "high-angle",
+    "url": "https://media.formula1.com/image/upload/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Williams/fhigh_v4-Albon_169.webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_williams.webp"
+  },
+  "haas": {
+    "season": 2026,
+    "angle": "high-angle",
+    "url": "https://media.formula1.com/image/upload/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Haas/10-Photos-16x9.0006.webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_haas.webp"
+  },
+  "mclaren": {
+    "season": 2026,
+    "angle": "front-three-quarter",
+    "url": "https://media.formula1.com/image/upload/t_16by9Centre/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/McLaren/MCL40_LN_Allwyn_right_front_3Q.webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_mclaren.webp"
+  },
+  "alpine": {
+    "season": 2026,
+    "angle": "front",
+    "url": "https://media.formula1.com/image/upload/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Alpine/TWJB_BWT_ALPINE_FORMULA_ONE_TEAM-A526_HERO_SHOT_3.webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_alpine.webp"
+  },
+  "aston_martin": {
+    "season": 2026,
+    "angle": "high-angle",
+    "url": "https://media.formula1.com/image/upload/t_16by9Centre/c_fit,w_3200,h_1800/q_auto/v1740000001/fom-website/2026/Aston%20Martin/GD2_2406%20copy.webp",
+    "processing": "Local foreground segmentation or alpha-mask extraction; original photo pixels; lossless WebP",
+    "resource": "car_cutout_2026_aston_martin.webp"
+  }
+}

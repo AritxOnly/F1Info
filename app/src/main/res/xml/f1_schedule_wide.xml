@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="230dp" android:minHeight="110dp"
+    android:minResizeWidth="230dp" android:minResizeHeight="110dp"
+    android:targetCellWidth="4" android:targetCellHeight="2"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000" android:widgetCategory="home_screen" android:configure="com.aritxonly.f1info.widgets.WidgetConfigurationActivity" android:widgetFeatures="reconfigurable|configuration_optional"
+    android:initialLayout="@layout/glance_default_loading_layout" android:description="@string/widget_standings_description" />

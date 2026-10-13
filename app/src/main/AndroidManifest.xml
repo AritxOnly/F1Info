@@ -1,0 +1,87 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+  <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+  <uses-permission android:name="android.permission.REQUEST_PROMOTED_NOTIFICATIONS" />
+  <queries><provider android:authorities="com.aritxonly.myhypermodifier.settings" /></queries>
+  <application android:label="F1Info" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/Theme.F1Info" android:allowBackup="true" android:dataExtractionRules="@xml/backup_rules" android:supportsRtl="true">
+    <provider android:name="rikka.shizuku.ShizukuProvider" android:authorities="${applicationId}.shizuku" android:exported="true" android:multiprocess="false" android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    <!-- libsu app_process service is instantiated by RootService, not Android ServiceManager. -->
+    <service android:name=".notification.IslandRootService" android:exported="false" tools:ignore="Instantiatable" />
+    <service android:name=".notification.LiveRaceService" android:exported="false" android:foregroundServiceType="dataSync" />
+    <activity android:name=".MainActivity" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <receiver android:name=".widgets.F1WidgetReceiver" android:exported="true" android:label="赛程 · 2×2">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.DriverPortraitWidgetReceiver" android:exported="true" android:label="车手积分 · 2×2">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_driver_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.SecondDriverPortraitWidgetReceiver" android:exported="true" android:label="车手积分 · 旧版">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_legacy_driver_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.DriversStandingsWidgetReceiver" android:exported="true" android:label="车手积分榜 · 4×2">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.TeamsStandingsWidgetReceiver" android:exported="true" android:label="车队积分榜 · 4×2">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.ScheduleWideWidgetReceiver" android:exported="true" android:label="赛程 · 4×2">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_schedule_wide" />
+    </receiver>
+    <receiver android:name=".widgets.ScheduleLargeWidgetReceiver" android:exported="true" android:label="赛程 · 4×4">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_schedule_large" />
+    </receiver>
+    <receiver android:name=".widgets.DriversLargeWidgetReceiver" android:exported="true" android:label="车手积分榜 · 4×4">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_large" />
+    </receiver>
+    <receiver android:name=".widgets.TeamsLargeWidgetReceiver" android:exported="true" android:label="车队积分榜 · 4×4">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_large" />
+    </receiver>
+    <activity android:name=".widgets.WidgetConfigurationActivity" android:exported="true">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="f1info" android:host="com.aritxonly.f1info" android:path="/widget/WidgetConfigurationActivity" />
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>

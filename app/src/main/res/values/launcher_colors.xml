@@ -1,0 +1,4 @@
+<resources>
+    <!-- MIUIX dark surfaceContainer, frozen for the launcher asset (not a generated palette). -->
+    <color name="launcher_background">#242424</color>
+</resources>

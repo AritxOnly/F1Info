@@ -1,0 +1,10 @@
+10-11 22:10:56.834  4988  5094 D F1Artwork: logo/mclaren cached 1024x1024
+10-11 22:10:56.976  4988  5090 D F1Artwork: car/mercedes cache hit 3392x746
+10-11 22:10:57.383  4988  5046 D F1Artwork: logo/red_bull cached 1024x1024
+10-11 22:10:57.398  4988  5092 D F1Artwork: logo/ferrari cached 1024x1024
+10-11 22:19:30.269  5322  5347 D F1Artwork: logo/mercedes cache hit 1024x1024
+10-11 22:19:30.270  5322  5347 D F1Artwork: logo/mercedes cache hit 1024x1024
+10-11 22:19:30.274  5322  5361 D F1Artwork: logo/ferrari cache hit 1024x1024
+10-11 22:19:30.562  5322  5349 D F1Artwork: logo/red_bull cache hit 1024x1024
+10-11 22:19:30.566  5322  5362 D F1Artwork: logo/mclaren cache hit 1024x1024
+10-11 22:19:30.700  5322  5351 D F1Artwork: car/mercedes cache hit 3392x746

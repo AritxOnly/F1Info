@@ -1,0 +1,25 @@
+# Build and IDE files
+.gradle/
+.kotlin/
+**/build/
+.idea/
+*.iml
+.DS_Store
+*.log
+*.apk
+*.aab
+*.apks
+
+# Local SDK paths, credentials, and private signing material
+local.properties
+signing.local.properties
+.signing/
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+.env
+.env.*
+!.env.example

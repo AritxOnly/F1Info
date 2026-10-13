@@ -1,0 +1,4 @@
+storeFile=.signing/f1info-release.p12
+keyAlias=f1info
+storePassword=YOUR_PRIVATE_PASSWORD
+keyPassword=YOUR_PRIVATE_PASSWORD

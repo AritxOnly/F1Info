@@ -1,0 +1,68 @@
+{
+  "mercedes": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/mercedes/2026mercedescarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "ferrari": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/ferrari/2026ferraricarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "red_bull": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/redbullracing/2026redbullracingcarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "rb": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/racingbulls/2026racingbullscarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "cadillac": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/cadillac/2026cadillaccarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "audi": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/audi/2026audicarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "williams": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/williams/2026williamscarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "haas": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/haas/2026haascarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "mclaren": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/mclaren/2026mclarencarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "alpine": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/alpine/2026alpinecarright.webp",
+    "processing": "None; original official transparent WebP"
+  },
+  "aston_martin": {
+    "season": 2026,
+    "angle": "side",
+    "url": "https://media.formula1.com/image/upload/c_lfill,w_3392/q_auto/v1740000001/common/f1/2026/astonmartin/2026astonmartincarright.webp",
+    "processing": "None; original official transparent WebP"
+  }
+}
