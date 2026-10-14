@@ -65,8 +65,7 @@ class LiveRaceService : Service() {
         if (island && LiveUpdateNotificationAdapter.supportsIsland())
             builder.addExtras(XiaomiIslandExtras.create(this, title, content, status, R.drawable.ic_launcher_monochrome))
         val notification = builder.build()
-        return if (Build.VERSION.SDK_INT >= 36 && Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1 && !LiveUpdateNotificationAdapter.supportsIsland()) Notification.Builder.recoverBuilder(this, notification)
-            .setRequestPromotedOngoing(true).setShortCriticalText(status.take(7)).build() else notification
+        return notification
     }
     override fun onTimeout(startId: Int, fgsType: Int) { stopSelf() }
     override fun onDestroy() { active.value = false; scope.cancel(); IslandWhitelistBypass.restore(this); stopForeground(STOP_FOREGROUND_REMOVE); super.onDestroy() }

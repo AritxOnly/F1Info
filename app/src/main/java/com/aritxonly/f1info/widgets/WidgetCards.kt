@@ -29,35 +29,62 @@ internal fun RacingWidgetContent(snapshot: WidgetSnapshot, colors: Colors, kind:
     val data = snapshot.data
     val followed = data?.drivers?.firstOrNull { it.id == configuration.driverId.ifBlank { snapshot.favorites.driverIds.getOrNull(slot).orEmpty() } }
     val accent = colors.onSurfaceSecondary
-    val background = remember(colors.surfaceContainer, accent) { ImageProvider(WidgetBackground.render(colors, accent)) }
+    val background = remember(colors.surfaceContainer, accent, configuration.themeStyle, layout) {
+        ImageProvider(WidgetBackground.render(colors, accent, configuration.themeStyle, layout))
+    }
     val intent = Intent(context, MainActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         putExtra("widget_destination", when (kind) { WidgetKind.Schedule -> "schedule"; WidgetKind.Drivers, WidgetKind.Teams -> "standings"; else -> "home" })
         putExtra("widget_category", if (kind == WidgetKind.Teams) 1 else 0)
     }
-    Box(GlanceModifier.fillMaxSize().padding(top = configuration.topMarginDp().dp, bottom = configuration.bottomMarginDp().dp)) {
+
+    val hasCustomMargin = configuration.marginPreset != WidgetMarginPreset.Default &&
+        (configuration.topMarginDp() > 0 || configuration.bottomMarginDp() > 0)
+    val outerModifier = if (hasCustomMargin) {
+        GlanceModifier.fillMaxSize().padding(top = configuration.topMarginDp().dp, bottom = configuration.bottomMarginDp().dp)
+    } else {
+        GlanceModifier.fillMaxSize()
+    }
+
+    val cornerModifier = if (configuration.isDefaultCornerRadius()) {
+        GlanceModifier.cornerRadius(android.R.dimen.system_app_widget_background_radius)
+    } else {
+        GlanceModifier.cornerRadius(configuration.cornerRadiusDp.dp)
+    }
+
+    val contentPaddingVertical = if (layout == WidgetLayout.Expanded) 16.dp else 14.dp
+    val totalVerticalPadding = (if (hasCustomMargin) configuration.topMarginDp() + configuration.bottomMarginDp() else 0) + (contentPaddingVertical.value.toInt() * 2)
+
+    Box(outerModifier) {
         Box(GlanceModifier.fillMaxSize().clickable(actionStartActivity(intent))) {
-        Image(provider = background, contentDescription = null, modifier = GlanceModifier.fillMaxSize().cornerRadius(configuration.cornerRadiusDp.dp).appWidgetBackground(), contentScale = ContentScale.FillBounds, alpha = configuration.opacity)
-        Box(GlanceModifier.fillMaxSize().padding(vertical = 12.dp)) {
-        val logoId = when (kind) {
-            WidgetKind.Portrait -> followed?.teamId
-            WidgetKind.Drivers -> data?.drivers?.filter { it.position != null }?.minByOrNull { it.position!! }?.teamId
-            WidgetKind.Teams -> data?.teams?.filter { it.position != null }?.minByOrNull { it.position!! }?.id
-            else -> null
-        }
-        val watermark = remember(logoId, colors.onSurface) { logoId?.let { WidgetArtwork.teamLogo(context, it, colors.onSurface.toArgb()) } }
-        if (watermark != null) Image(ImageProvider(watermark), null,
-            modifier = GlanceModifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 20.dp), contentScale = ContentScale.Fit, alpha = .10f)
-        if (data == null) Column(GlanceModifier.fillMaxSize().padding(horizontal = 12.dp)) {
-            Label("F1Info", colors.onSurface, 16, true)
-            Spacer(GlanceModifier.height(12.dp))
-            Label("点击打开应用，加载赛程与积分。", colors.onSurfaceVariantSummary, 12)
-        } else when (kind) {
-            WidgetKind.Schedule -> ScheduleCard(data, colors, accent, layout, configuration.topMarginDp() + configuration.bottomMarginDp() + 24)
-            WidgetKind.Portrait -> PortraitCard(followed, colors, accent, slot)
-            WidgetKind.Drivers, WidgetKind.Teams -> RankingCard(data, colors, accent, layout, kind == WidgetKind.Teams, configuration.topMarginDp() + configuration.bottomMarginDp() + 24)
-        }
-        }
+            Image(
+                provider = background,
+                contentDescription = null,
+                modifier = GlanceModifier.fillMaxSize().then(cornerModifier).appWidgetBackground(),
+                contentScale = ContentScale.FillBounds,
+                alpha = configuration.opacity
+            )
+            // HyperOS safe area padding: 16dp horizontal, 14dp/16dp vertical
+            Box(GlanceModifier.fillMaxSize().padding(horizontal = 16.dp, vertical = contentPaddingVertical)) {
+                val logoId = when (kind) {
+                    WidgetKind.Portrait -> followed?.teamId
+                    WidgetKind.Drivers -> data?.drivers?.filter { it.position != null }?.minByOrNull { it.position!! }?.teamId
+                    WidgetKind.Teams -> data?.teams?.filter { it.position != null }?.minByOrNull { it.position!! }?.id
+                    else -> null
+                }
+                val watermark = remember(logoId, colors.onSurface) { logoId?.let { WidgetArtwork.teamLogo(context, it, colors.onSurface.toArgb()) } }
+                if (watermark != null) Image(ImageProvider(watermark), null,
+                    modifier = GlanceModifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 16.dp), contentScale = ContentScale.Fit, alpha = .10f)
+                if (data == null) Column(GlanceModifier.fillMaxSize()) {
+                    Label("F1Info", colors.onSurface, 16, true)
+                    Spacer(GlanceModifier.height(12.dp))
+                    Label("点击打开应用，加载赛程与积分。", colors.onSurfaceVariantSummary, 12)
+                } else when (kind) {
+                    WidgetKind.Schedule -> ScheduleCard(data, colors, accent, layout, totalVerticalPadding)
+                    WidgetKind.Portrait -> PortraitCard(followed, colors, accent, slot)
+                    WidgetKind.Drivers, WidgetKind.Teams -> RankingCard(data, colors, accent, layout, kind == WidgetKind.Teams, totalVerticalPadding)
+                }
+            }
         }
     }
 }
@@ -68,7 +95,7 @@ private fun ScheduleCard(data: SeasonData, c: Colors, accent: Color, layout: Wid
     val next = event?.race
     val context = LocalContext.current
     val track = remember(next?.circuit?.id, accent) { next?.let { WidgetArtwork.circuit(context, it.circuit, accent.toArgb()) } }
-    Column(GlanceModifier.fillMaxSize().padding(horizontal = 12.dp)) {
+    Column(GlanceModifier.fillMaxSize()) {
         if (next == null || event == null) {
             Label("${data.season} 赛季已结束", c.onSurface, 16, true)
             Spacer(GlanceModifier.height(8.dp)); Label("点击回顾完整赛程", c.onSurfaceVariantSummary, 12)
@@ -138,7 +165,7 @@ private fun ScheduleCard(data: SeasonData, c: Colors, accent: Color, layout: Wid
 private fun PortraitCard(driver: Driver?, c: Colors, accent: Color, slot: Int) {
     val context = LocalContext.current
     val photo = remember(driver?.id) { driver?.let { WidgetArtwork.portrait(context, it.id) } }
-    Column(GlanceModifier.fillMaxSize().padding(horizontal = 12.dp)) {
+    Column(GlanceModifier.fillMaxSize()) {
         Row(GlanceModifier.fillMaxWidth()) {
             Label("车手积分", accent, 11, modifier = GlanceModifier.defaultWeight())
             Label(driver?.position?.let { "P$it" } ?: "—", c.onSurface, 12, true)
@@ -171,7 +198,7 @@ private fun RankingCard(data: SeasonData, c: Colors, accent: Color, layout: Widg
     val expanded = layout == WidgetLayout.Expanded
     val fontScale = context.resources.configuration.fontScale.coerceAtLeast(1f)
     val headerHeight = 100f * fontScale
-    Column(GlanceModifier.fillMaxSize().padding(horizontal = 12.dp)) {
+    Column(GlanceModifier.fillMaxSize()) {
         Row(GlanceModifier.fillMaxWidth()) {
             Label("${if (teams) "车队" else "车手"}积分榜", c.onSurface, 13, true, GlanceModifier.defaultWeight())
             Label("R${data.standingsRound ?: "—"}", c.onSurfaceVariantSummary, 10)
