@@ -75,6 +75,13 @@ internal fun WidgetConfigurationEditor(initial: WidgetConfiguration, portrait: B
             WidgetLivePreview(configuration, providerName)
             SectionTitle("外观")
             SettingsSection(containerAlpha = 1f) {
+                OverlayDropdownPreference(
+                    title = "视觉风格",
+                    items = WidgetThemeStyle.entries.map { it.label },
+                    selectedIndex = WidgetThemeStyle.entries.indexOf(configuration.themeStyle),
+                    summary = if (configuration.themeStyle == WidgetThemeStyle.HyperOS) "澎湃 2.0 柔光毛玻璃质感" else "原生 Material 3 纯平质感",
+                    onSelectedIndexChange = { configuration = configuration.copy(themeStyle = WidgetThemeStyle.entries[it]) }
+                )
                 SliderPreference(configuration.opacity, { configuration = configuration.copy(opacity = it) },
                     title = "背景不透明度", valueText = "${(configuration.opacity * 100).roundToInt()}%")
                 OverlayDropdownPreference(title = "文字颜色", items = listOf("浅色文字", "深色文字"),
@@ -96,8 +103,9 @@ internal fun WidgetConfigurationEditor(initial: WidgetConfiguration, portrait: B
                     Text("上下边距合计最多 40 dp；卡片内容保留固定内边距。", Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
                         style = MiuixTheme.textStyles.footnote2, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
                 }
+                val cornerText = if (configuration.isDefaultCornerRadius()) "${configuration.cornerRadiusDp} dp (澎湃标准/自适应)" else "${configuration.cornerRadiusDp} dp"
                 SliderPreference(configuration.cornerRadiusDp.toFloat(), { configuration = configuration.copy(cornerRadiusDp = it.roundToInt()) },
-                    title = "背景圆角", valueText = "${configuration.cornerRadiusDp} dp", valueRange = 8f..32f, steps = 23)
+                    title = "背景圆角", valueText = cornerText, valueRange = 8f..32f, steps = 24)
             }
         }
         if (portrait) item {

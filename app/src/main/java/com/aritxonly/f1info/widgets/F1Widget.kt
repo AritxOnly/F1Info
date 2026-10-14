@@ -43,6 +43,16 @@ abstract class RacingWidgetReceiver : GlanceAppWidgetReceiver() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         WidgetConfigurationStore.registerEditor(context, appWidgetIds)
     }
+
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: android.appwidget.AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: android.os.Bundle
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        WidgetConfigurationStore.registerEditor(context, intArrayOf(appWidgetId))
+    }
 }
 class ScheduleWideWidget : RacingWidget(WidgetKind.Schedule)
 class ScheduleLargeWidget : RacingWidget(WidgetKind.Schedule)
@@ -58,6 +68,16 @@ class DriverPortraitWidgetReceiver : RacingWidgetReceiver() { override val glanc
 class SecondDriverPortraitWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = SecondDriverPortraitWidget() }
 class DriversStandingsWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = DriversStandingsWidget() }
 class TeamsStandingsWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = TeamsStandingsWidget() }
+
+// AOSP 原生通道 Receivers（确保在澎湃原生抽屉及所有 Android 原生桌面上 100% 可见与使用）
+class F1AospWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = F1Widget() }
+class DriverPortraitAospWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = DriverPortraitWidget() }
+class DriversStandingsAospWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = DriversStandingsWidget() }
+class TeamsStandingsAospWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = TeamsStandingsWidget() }
+class ScheduleWideAospWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = ScheduleWideWidget() }
+class ScheduleLargeAospWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = ScheduleLargeWidget() }
+class DriversLargeAospWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = DriversLargeWidget() }
+class TeamsLargeAospWidgetReceiver : RacingWidgetReceiver() { override val glanceAppWidget = TeamsLargeWidget() }
 
 suspend fun refreshF1Widgets(context: Context) {
     WidgetState.revision.value = WidgetState.revision.value + 1

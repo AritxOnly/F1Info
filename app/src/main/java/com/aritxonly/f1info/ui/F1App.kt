@@ -152,11 +152,27 @@ private fun AppShell(state: F1State, backdrop: LayerBackdrop, onRefresh: () -> U
         CompositionLocalProvider(LocalAdvancedMaterialBackdrop provides entryBackdrop) {
         val detailAccent = if (entityOpen) teamBrandColor(selectedDriver?.teamId ?: selectedTeam?.id) else teamBrandColor(state.favorites.teamId)
         SecondaryPage(
-            title = when { raceOpen -> "比赛周末"; entityOpen -> if (selectedDriver != null) "车手详情" else "车队详情"; favoritesOpen -> "我的围场"; route.kind == "results" -> "比赛结果"; route.kind == "settings" || route.kind == "live-settings" -> "设置"; route.kind == "openf1-settings" -> "OpenF1 API"; route.kind == "island-settings" -> "超级岛"; route.kind == "calendar" -> "导入日历日程"; route.kind == "live-sessions" -> "选择场次"; else -> "关于" },
+            title = when {
+                raceOpen -> "比赛周末"
+                entityOpen -> if (selectedDriver != null) "车手详情" else "车队详情"
+                favoritesOpen -> "我的围场"
+                route.kind == "results" -> "比赛结果"
+                route.kind == "settings" || route.kind == "live-settings" -> "设置"
+                route.kind == "openf1-settings" -> "OpenF1 API"
+                route.kind == "island-settings" -> "超级岛"
+                route.kind == "calendar" -> "导入日历日程"
+                route.kind == "live-sessions" -> "选择场次"
+                route.kind == "widget-gallery" -> "桌面小组件"
+                else -> "关于"
+            },
             accent = detailAccent, onBack = back,
-            tabs = when { favoritesOpen -> listOf("车手", "车队"); resultsOpen -> listOf("正赛", "排位赛", "冲刺赛"); else -> emptyList() },
+            tabs = when {
+                favoritesOpen -> listOf("车手", "车队")
+                resultsOpen -> listOf("正赛", "排位赛", "冲刺赛")
+                else -> emptyList()
+            },
             selectedTab = if (resultsOpen) resultsCategory else favoritesCategory,
-            onTab = { if (resultsOpen) resultsCategory = it else favoritesCategory = it },
+            onTab = { if (resultsOpen) resultsCategory = it else favoritesCategory = it }
         ) {
             when {
                 raceOpen -> RaceDetailContent(selectedRace, { stack.add(DetailRoute("results", "${it.season}:${it.round}")) }, { tab = "live"; back() })
@@ -166,10 +182,10 @@ private fun AppShell(state: F1State, backdrop: LayerBackdrop, onRefresh: () -> U
                 route.kind == "island-settings" -> LiveSettingsContent("island")
                 route.kind == "calendar" -> CalendarImportContent(state.data)
                 route.kind == "live-sessions" -> LiveSessionsContent(state.data?.season ?: java.time.LocalDate.now().year, back)
+                route.kind == "widget-gallery" -> com.aritxonly.f1info.widgets.WidgetPreviewGallery(0, now)
                 entityOpen -> EntityDetailContent(selectedDriver, selectedTeam, state.favorites, state.data, onFavorites)
                 favoritesOpen -> FavoritesDetailContent(state.data, state.favorites, back, onFavorites, favoritesCategory)
                 else -> AboutContent()
-
             }
         }
         }

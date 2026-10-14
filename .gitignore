@@ -23,3 +23,7 @@ signing.local.properties
 .env
 .env.*
 !.env.example
+
+# Local scratch and patches
+.gradle-home/
+*.patch

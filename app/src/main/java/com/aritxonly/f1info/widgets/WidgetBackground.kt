@@ -4,25 +4,61 @@ import android.graphics.*
 import androidx.compose.ui.graphics.toArgb
 import top.yukonga.miuix.kmp.theme.Colors
 
-// Adapted from Deadliner's TaskWidgetBackgroundRenderer, revision 210e4a2.
-// Same opaque bitmap + layered gradients; MIUIX semantic colors replace task palettes.
+// Dual compatibility: HyperOS soft-light glass with subtle vertical depth and ambient corner glow vs AOSP native Material 3 clean surface.
 internal object WidgetBackground {
-    fun render(colors: Colors, accent: androidx.compose.ui.graphics.Color = colors.primary): Bitmap {
-        val bitmap = Bitmap.createBitmap(240, 240, Bitmap.Config.ARGB_8888)
+    fun render(
+        colors: Colors,
+        accent: androidx.compose.ui.graphics.Color = colors.primary,
+        themeStyle: WidgetThemeStyle = WidgetThemeStyle.HyperOS,
+        layout: WidgetLayout = WidgetLayout.Compact
+    ): Bitmap {
+        // Generate bitmap matching actual widget aspect ratio:
+        // Wide (4x2) -> 480x240 (2:1 ratio, prevents horizontal stretching distortion)
+        // Compact (2x2) -> 240x240 (1:1 ratio)
+        // Expanded (4x4) -> 360x360 (1:1 ratio)
+        val (width, height) = when (layout) {
+            WidgetLayout.Wide -> 480 to 240
+            WidgetLayout.Expanded -> 360 to 360
+            WidgetLayout.Compact -> 240 to 240
+        }
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        canvas.drawColor(colors.surfaceContainer.toArgb())
-        paint.shader = LinearGradient(0f, 0f, 240f, 240f, colors.surfaceContainer.toArgb(),
-            colors.surfaceContainer.toArgb(), Shader.TileMode.CLAMP)
-        canvas.drawRect(0f, 0f, 240f, 240f, paint)
-        paint.shader = RadialGradient(249.6f, -19.2f, 172.8f, colors.onSurface.copy(alpha = .035f).toArgb(),
-            Color.TRANSPARENT, Shader.TileMode.CLAMP)
-        canvas.drawRect(0f, 0f, 240f, 240f, paint)
-        paint.shader = LinearGradient(0f, 80f, 0f, 240f, Color.TRANSPARENT, colors.surfaceContainer.toArgb(), Shader.TileMode.CLAMP)
-        canvas.drawRect(0f, 0f, 240f, 240f, paint)
-        paint.shader = null
 
-        bitmap.setHasAlpha(false)
+        val baseColor = colors.surfaceContainer.toArgb()
+        canvas.drawColor(baseColor)
+
+        if (themeStyle == WidgetThemeStyle.HyperOS) {
+            // Soft-light vertical depth gradient (HyperOS glass simulation)
+            paint.shader = LinearGradient(
+                0f, 0f, 0f, height.toFloat(),
+                baseColor,
+                colors.surfaceContainer.copy(alpha = 0.88f).toArgb(),
+                Shader.TileMode.CLAMP
+            )
+            canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+
+            // Ambient corner glow (HyperOS dynamic lighting, dynamically anchored to top-right corner)
+            val glowRadius = minOf(width, height) * 0.72f
+            paint.shader = RadialGradient(
+                width * 1.04f, -height * 0.08f, glowRadius,
+                colors.onSurface.copy(alpha = 0.04f).toArgb(),
+                Color.TRANSPARENT,
+                Shader.TileMode.CLAMP
+            )
+            canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+        } else {
+            // AOSP Native Material 3 Style: Clean tonal surface, no highlight stroke
+            paint.shader = LinearGradient(
+                0f, 0f, 0f, height.toFloat(),
+                baseColor,
+                baseColor,
+                Shader.TileMode.CLAMP
+            )
+            canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+        }
+
+        bitmap.setHasAlpha(true)
         return bitmap
     }
 }

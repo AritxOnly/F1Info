@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
   <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
@@ -21,52 +22,138 @@
     <receiver android:name=".widgets.F1WidgetReceiver" android:exported="true" android:label="赛程 · 2×2">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_widget_info" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
     </receiver>
     <receiver android:name=".widgets.DriverPortraitWidgetReceiver" android:exported="true" android:label="车手积分 · 2×2">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_driver_widget_info" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
     </receiver>
     <receiver android:name=".widgets.SecondDriverPortraitWidgetReceiver" android:exported="true" android:label="车手积分 · 旧版">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_legacy_driver_widget_info" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
     </receiver>
     <receiver android:name=".widgets.DriversStandingsWidgetReceiver" android:exported="true" android:label="车手积分榜 · 4×2">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_widget_info" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
     </receiver>
     <receiver android:name=".widgets.TeamsStandingsWidgetReceiver" android:exported="true" android:label="车队积分榜 · 4×2">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_widget_info" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
     </receiver>
     <receiver android:name=".widgets.ScheduleWideWidgetReceiver" android:exported="true" android:label="赛程 · 4×2">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_schedule_wide" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
+    </receiver>
+    <receiver android:name=".widgets.ScheduleLargeWidgetReceiver" android:exported="true" android:label="赛程 · 4×4">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_schedule_large" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
+    </receiver>
+    <receiver android:name=".widgets.DriversLargeWidgetReceiver" android:exported="true" android:label="车手积分榜 · 4×4">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_large" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
+    </receiver>
+    <receiver android:name=".widgets.TeamsLargeWidgetReceiver" android:exported="true" android:label="车队积分榜 · 4×4">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="miui.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_large" />
+      <meta-data android:name="miuiWidget" android:value="true" />
+      <meta-data android:name="miuiWidgetRefresh" android:value="exposure" />
+      <meta-data android:name="miuiWidgetRefreshMinInterval" android:value="10000" />
+    </receiver>
+
+    <!-- 原生 AOSP 通道（确保在澎湃原生抽屉与所有标准 Android 桌面上 100% 出现，不带任何 miuiWidget 拦截） -->
+    <receiver android:name=".widgets.F1AospWidgetReceiver" android:exported="true" android:label="赛程 · 2×2 (原生)">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.ScheduleWideAospWidgetReceiver" android:exported="true" android:label="赛程 · 4×2 (原生)">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_schedule_wide" />
     </receiver>
-    <receiver android:name=".widgets.ScheduleLargeWidgetReceiver" android:exported="true" android:label="赛程 · 4×4">
+    <receiver android:name=".widgets.ScheduleLargeAospWidgetReceiver" android:exported="true" android:label="赛程 · 4×4 (原生)">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_schedule_large" />
     </receiver>
-    <receiver android:name=".widgets.DriversLargeWidgetReceiver" android:exported="true" android:label="车手积分榜 · 4×4">
+    <receiver android:name=".widgets.DriverPortraitAospWidgetReceiver" android:exported="true" android:label="车手积分 · 2×2 (原生)">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_driver_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.DriversStandingsAospWidgetReceiver" android:exported="true" android:label="车手积分榜 · 4×2 (原生)">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.DriversLargeAospWidgetReceiver" android:exported="true" android:label="车手积分榜 · 4×4 (原生)">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_large" />
     </receiver>
-    <receiver android:name=".widgets.TeamsLargeWidgetReceiver" android:exported="true" android:label="车队积分榜 · 4×4">
+    <receiver android:name=".widgets.TeamsStandingsAospWidgetReceiver" android:exported="true" android:label="车队积分榜 · 4×2 (原生)">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/f1_standings_widget_info" />
+    </receiver>
+    <receiver android:name=".widgets.TeamsLargeAospWidgetReceiver" android:exported="true" android:label="车队积分榜 · 4×4 (原生)">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
