@@ -1,7 +1,6 @@
 package com.aritxonly.f1info.ui.components
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -12,6 +11,7 @@ import androidx.core.graphics.ColorUtils
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 val LocalRacingAccent = compositionLocalOf<State<Color>> { mutableStateOf(Color.Unspecified) }
+
 
 // Snapshot team_colour from OpenF1 latest drivers, retrieved 2026-10-11.
 private val teamColors = mapOf(

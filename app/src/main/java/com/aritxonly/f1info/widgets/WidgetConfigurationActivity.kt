@@ -66,9 +66,9 @@ class WidgetConfigurationActivity : ComponentActivity() {
 @Composable
 internal fun WidgetConfigurationEditor(initial: WidgetConfiguration, portrait: Boolean,
     drivers: List<com.aritxonly.f1info.model.Driver>, providerName: String, onSave: (WidgetConfiguration) -> Unit) {
-    var configuration by remember { mutableStateOf(initial) }
+    var configuration by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(initial) }
     Box(Modifier.fillMaxSize()) {
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = secondaryContentPadding(extraBottom = 100.dp)) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding(extraBottom = 100.dp)) {
         item {
             Text("每个小组件独立保存外观。透明背景可选择浅色或深色文字来搭配壁纸。",
                 style = MiuixTheme.textStyles.footnote1, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)

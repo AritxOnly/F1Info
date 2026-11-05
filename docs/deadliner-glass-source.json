@@ -1,0 +1,30 @@
+{
+  "revision": "9119af22827e15d4b5b3bea7d938f865800ee1da",
+  "workingTreeChangesIncluded": true,
+  "capturedDate": "2026-10-25",
+  "files": {
+    "app/src/main/java/com/aritxonly/deadliner/model/AdvancedMaterialFineTuning.kt": "02aeccd41c4034bda666d7661439eb2a5074d6007ea433b8cdca16ce059258a8",
+    "app/src/main/java/com/aritxonly/deadliner/model/AdvancedMaterialLevel.kt": "fa70356e2673662d4ad9730c04f6b5764534a69d9b87ecb57269b2af9e2f2b39",
+    "app/src/main/java/com/aritxonly/deadliner/model/AdvancedMaterialTuning.kt": "8c7dcbdbd9de8bba42bcebbf0dd7bc6f17a528fac186a4bde34102864ea71635",
+    "app/src/main/java/com/aritxonly/deadliner/model/GlassShadowPreset.kt": "bb0bd9a83b35179a40b7b4d27bb61fdcd5cbcbee896450afc979f713c8e01569",
+    "app/src/main/java/com/aritxonly/deadliner/model/MiuixModalMaterialTuning.kt": "36b61f470db58752c6677a343f08a93256cce5362c85e1e8e71ebc38d54911c4",
+    "app/src/main/java/com/aritxonly/deadliner/ui/base/EdgeFade.kt": "0622d0df02c5463b54f907435b49c3c425d4f11347964112546edfa700296ba1",
+    "app/src/main/java/com/aritxonly/deadliner/ui/base/ImmersiveMiuixCompactNavigationScaffold.kt": "41acb0c8c4e3b0fcd0d3cf123ef7c473bcf4e76cb448aa4855397eef363cc7dc",
+    "app/src/main/java/com/aritxonly/deadliner/ui/base/feedback/PressFeedback.kt": "8efa298522b10fbfad19925995a19621098ea5b11c0d4dc1e1ffebc9ae79af2a",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/GlassBoundaryDefinition.kt": "3a2abef30671981f34c9a8b10a5f8e274e69e6cd22852b635c1dded6ca7aed9d",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/GlassEdgeHighlight.kt": "022308edadd3d2ce8face21b4f6ebf4252f0282c2f1c4827a7f734457660f61c",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/GlassMaterialModifier.kt": "ad93a55d4de25c983a49431b8ec02846979b5c2f8480672faee7668fa3d0f2b3",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/GlassMaterialSpec.kt": "6b51b9a1e96d32366fc6f57821c02be61d25a608e0774cba8e3d290276d4b1ea",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/GlassRefractionShader.kt": "cda540f377e00c24f8cd2b35ae5506925a8f38290e89cc4b3846d219505d7ead",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/GlassSampling.kt": "e89d45d914058138ceaa173596fb55cdc27eb73a7b149ee7b6a90aa27c5b9390",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/OfficialMiuixGlassMaterial.kt": "f8479a50b9e5b46a5ad832d53430ba334858634f744733f605653087b49c6815",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/ProgressiveTopBarMaterial.kt": "cfccc7edbd7278a61ef783850efe57c22538709b29d25f5fe52593636e1f4ec0",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/SoftGlassShadow.kt": "baa6a84f6bbd8654ea7f51a3b95110f052fdfa00c06c64fda6c340e6caafe0a3",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/SoftGlassSurface.kt": "61cb8543bc12420bcd6fbfb42a8fa17dd5422437d694a5287d928a810eb3695c",
+    "app/src/main/java/com/aritxonly/deadliner/ui/material/glass/TopBarGlassShadowHost.kt": "de0c12520aaca4eced9a84a26e43cc50fe4e7b6f04fd7dce14a0ce65e4198509",
+    "app/src/main/java/com/aritxonly/deadliner/ui/navigation/FloatingNavigationShadow.kt": "ede857bf8de11d344df9fd50b8026b19c145143b481e8053c647d55af07562d8",
+    "app/src/main/java/com/aritxonly/deadliner/ui/navigation/FloatingTabMotion.kt": "0218c71268599b1cad185b116ab19314a9599d82f98e71cb28a2efca6d835bf3",
+    "app/src/main/java/com/aritxonly/deadliner/ui/navigation/MiuixFloatingTabBar.kt": "820bcca809b12c61642cee0c16bb9829e1e218b52138b76b7b2bd69c840f02a5",
+    "app/src/main/java/com/aritxonly/deadliner/ui/theme/AdvancedMaterial.kt": "171336e045b835161eb5d76912460b65f5ae319478b8ce6199e4740f7628a0c6"
+  }
+}

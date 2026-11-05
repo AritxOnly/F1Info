@@ -1,7 +1,7 @@
 package com.aritxonly.f1info.model
 
-// Migrated from Deadliner 210e4a2d4c6bf7df291b6c6852d39366bc1fee17.
-// Integration changes: package and MIUIX semantic UI bindings only.
+// Synced from Deadliner 5499df09383e84a120e19bd0c629c6e6ffa7ef0d + local working changes (2026-10-20).
+// Integration: package and MIUIX semantic UI bindings; see docs/UPSTREAM.md.
 
 enum class MiuixModalKind {
     Dialog,
@@ -18,9 +18,9 @@ data class MiuixModalMaterialTuning(
         const val MinBlurRadiusDp = 0f
         const val MaxBlurRadiusDp = 150f
 
-        const val DialogDefaultBackgroundAlpha = 0.65f
+        const val DialogDefaultBackgroundAlpha = 0.70237434f
         const val DialogDefaultBlurRadiusDp = 80f
-        const val BottomSheetDefaultBackgroundAlpha = 0.70f
+        const val BottomSheetDefaultBackgroundAlpha = 0.69986033f
         const val BottomSheetDefaultBlurRadiusDp = 80f
     }
 }

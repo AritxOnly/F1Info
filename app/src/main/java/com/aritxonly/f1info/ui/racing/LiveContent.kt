@@ -27,7 +27,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-fun LazyListScope.liveContent(state: LiveFeed.State, now: Instant, onSessions: () -> Unit, onSettings: () -> Unit) {
+fun LazyListScope.liveContent(state: LiveFeed.State, now: Instant, onSessions: () -> Unit, onSettings: () -> Unit, split: Boolean) {
     val data = state.data
     item("live-header") { LiveHeader(state, now, onSessions, onSettings) }
     if (data != null) {
@@ -46,19 +46,23 @@ fun LazyListScope.liveContent(state: LiveFeed.State, now: Instant, onSessions: (
                 }
             } }
         }
-        item("control-title") { Box(Modifier.padding(horizontal = 16.dp)) { SectionTitle("比赛动态", "Race Control") } }
-        if (data.events.isEmpty()) item { Text("暂无赛会动态", modifier = Modifier.padding(16.dp)) }
-        items(data.events, key = { "event-${it.key}" }) { event ->
-            Box(Modifier.padding(horizontal = 16.dp)) { SettingsSection {
-                Column(Modifier.padding(16.dp)) {
-                    Text(event.date.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm:ss")) + (event.lap?.let { " · LAP $it" } ?: "") + if (event.flag.isBlank()) "" else " · ${event.flag}",
-                        fontFamily = RacingDisplayFamily, style = MiuixTheme.textStyles.footnote2, color = MiuixTheme.colorScheme.primary)
-                    Text(event.message, style = MiuixTheme.textStyles.body2, modifier = Modifier.padding(top = 8.dp))
-                }
-            } }
-        }
+        if (!split) raceControlContent(data)
     }
     item { Text("OpenF1 · 约每 15 秒更新 · 设备本地时间\n历史动态免费，赛中实时数据需要 OpenF1 Sponsor 授权。", style = MiuixTheme.textStyles.footnote2, modifier = Modifier.padding(16.dp), color = MiuixTheme.colorScheme.onSurfaceVariantSummary) }
+}
+
+internal fun LazyListScope.raceControlContent(data: LiveSnapshot) {
+    item("control-title") { Box(Modifier.padding(horizontal = 16.dp)) { SectionTitle("比赛动态", "Race Control") } }
+    if (data.events.isEmpty()) item { Text("暂无赛会动态", modifier = Modifier.padding(16.dp)) }
+    items(data.events, key = { "event-${it.key}" }) { event ->
+        Box(Modifier.padding(horizontal = 16.dp)) { SettingsSection {
+            Column(Modifier.padding(16.dp)) {
+                Text(event.date.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm:ss")) + (event.lap?.let { " · LAP $it" } ?: "") + if (event.flag.isBlank()) "" else " · ${event.flag}",
+                    fontFamily = RacingDisplayFamily, style = MiuixTheme.textStyles.footnote2, color = MiuixTheme.colorScheme.primary)
+                Text(event.message, style = MiuixTheme.textStyles.body2, modifier = Modifier.padding(top = 8.dp))
+            }
+        } }
+    }
 }
 
 @Composable

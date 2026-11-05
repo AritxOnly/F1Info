@@ -1,0 +1,130 @@
+package com.aritxonly.f1info.ui.material.glass
+
+import androidx.compose.ui.unit.dp
+import com.aritxonly.f1info.model.AdvancedMaterialFineTuning
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class GlassMaterialRecipeTuningTest {
+    @Test fun thinHighlightDoesNotReduceTheRefractionOrDispersionField() {
+        val normal = DeadlinerGlassRecipes.floatingNavigation(AdvancedMaterialFineTuning.Default)
+        val strongerLens = DeadlinerGlassRecipes.floatingNavigation(AdvancedMaterialFineTuning.Default.copy(
+            refractionHeightDp = 28f, refractionAmountDp = 24f, chromaticAberrationDp = 2f))
+        assertEquals(0.6.dp, normal.edgeOptics.rimWidth)
+        assertEquals(normal.edgeOptics.rimWidth, strongerLens.edgeOptics.rimWidth)
+        assertEquals(28.dp, strongerLens.refraction.height)
+        assertEquals(24.dp, strongerLens.refraction.amount)
+        assertEquals(2.dp, strongerLens.refraction.chromaticAberration)
+    }
+
+    @Test
+    fun dropdownLensMatchesItsClipWithoutLosingModalTuning() {
+        val tuning = AdvancedMaterialFineTuning.Default.copy(refractionAmountDp = 9f,
+            glassBlurRadiusMultiplier = 0.32f, glassNoiseMultiplier = 0.5f)
+        val recipe = DeadlinerGlassRecipes.dropdown(tuning)
+        val dialog = DeadlinerGlassRecipes.dialog(tuning)
+        assertEquals(24.dp, recipe.geometry.cornerRadius)
+        assertEquals(dialog.copy(geometry = recipe.geometry), recipe)
+        assertEquals(40.dp, dialog.geometry.cornerRadius)
+    }
+
+    @Test
+    fun quickAddLensUsesThePhysicalRectangleRadius() {
+        val recipe = DeadlinerGlassRecipes.quickAdd(AdvancedMaterialFineTuning.Default)
+        assertEquals(28.dp, recipe.geometry.cornerRadius)
+        assertEquals(DeadlinerGlassRecipes.QuickAddCornerRadius, recipe.geometry.cornerRadius)
+        assertEquals(DeadlinerGlassRecipes.floatingNavigation(AdvancedMaterialFineTuning.Default).refraction,
+            recipe.refraction)
+    }
+
+    @Test
+    fun quickAddUsesModalBlurAndPreservesUserOptics() {
+        val tuning = AdvancedMaterialFineTuning.Default.copy(glassBlurRadiusMultiplier = 0.32f,
+            glassNoiseMultiplier = 0.5f, glassTintAlphaMultiplier = 0.8f)
+        val recipe = DeadlinerGlassRecipes.quickAdd(tuning)
+        assertEquals(DeadlinerGlassRecipes.dialog(tuning).blur, recipe.blur)
+        assertTrue(recipe.blur.radiusMultiplier > DeadlinerGlassRecipes.floatingNavigation(tuning).blur.radiusMultiplier)
+        assertEquals(DeadlinerGlassRecipes.floatingNavigation(tuning).edgeOptics, recipe.edgeOptics)
+    }
+
+    @Test
+    fun floatingNavigationUsesPinnedDefaultPreset() {
+        val recipe = DeadlinerGlassRecipes.floatingNavigation(
+            AdvancedMaterialFineTuning.Default,
+        )
+
+        assertEquals(0.4f, recipe.blur.radiusMultiplier, 0.0001f)
+        assertEquals(18.dp, recipe.refraction.height)
+        assertEquals(18.dp, recipe.refraction.amount)
+        assertEquals(0.60f, recipe.refraction.depthEffect, 0.0001f)
+        assertEquals(1.dp, recipe.refraction.chromaticAberration)
+        assertEquals(0.9f, recipe.edgeOptics.highlightAlpha, 0.0001f)
+        assertEquals(0.21994415f, recipe.edgeOptics.darkHighlightMultiplier, 0.0001f)
+        assertEquals(0.5.dp, recipe.layering.postRefractionBlurRadius)
+    }
+
+    @Test
+    fun floatingNavigationMapsFineTuningIntoRecipe() {
+        val recipe = DeadlinerGlassRecipes.floatingNavigation(
+            AdvancedMaterialFineTuning.Default.copy(
+                glassBlurRadiusMultiplier = 0.32f,
+                refractionEnabled = false,
+                refractionHeightDp = 22f,
+                refractionAmountDp = 19f,
+                chromaticAberrationDp = 1.5f,
+                edgeHighlightAlpha = 0.18f,
+                edgeHighlightGray = 0.72f,
+                postRefractionBlurRadiusDp = 0.8f,
+            ),
+        )
+
+        assertEquals(0.32f, recipe.blur.radiusMultiplier, 0.0001f)
+        assertFalse(recipe.refraction.enabled)
+        assertEquals(22.dp, recipe.refraction.height)
+        assertEquals(19.dp, recipe.refraction.amount)
+        assertEquals(1.5.dp, recipe.refraction.chromaticAberration)
+        assertEquals(0.18f, recipe.edgeOptics.highlightAlpha, 0.0001f)
+        assertEquals(0.72f, recipe.edgeOptics.highlightGray, 0.0001f)
+        assertEquals(0.8.dp, recipe.layering.postRefractionBlurRadius)
+    }
+
+    @Test
+    fun modalBlurScalesFromTheUsersSoftGlassRadius() {
+        val tuning = AdvancedMaterialFineTuning.Default.copy(
+            glassBlurRadiusMultiplier = 0.25f,
+        )
+
+        val dialog = DeadlinerGlassRecipes.dialog(tuning)
+        val bottomSheet = DeadlinerGlassRecipes.bottomSheet(tuning)
+
+        assertEquals(1f, dialog.blur.radiusMultiplier, 0.0001f)
+        assertEquals(2f, bottomSheet.blur.radiusMultiplier, 0.0001f)
+    }
+
+    @Test
+    fun modalBlurPreservesCustomSoftGlassTuning() {
+        val tuning = AdvancedMaterialFineTuning.Default.copy(
+            glassBlurRadiusMultiplier = 0.4f,
+        )
+
+        val dialog = DeadlinerGlassRecipes.dialog(tuning)
+        val bottomSheet = DeadlinerGlassRecipes.bottomSheet(tuning)
+
+        assertEquals(1.6f, dialog.blur.radiusMultiplier, 0.0001f)
+        assertEquals(3.2f, bottomSheet.blur.radiusMultiplier, 0.0001f)
+    }
+
+    @Test
+    fun immersiveDialogUsesAdvancedMaterialAndWeakHighlightBorder() {
+        val recipe = DeadlinerGlassRecipes.immersiveDialogAdvancedHighlight(
+            AdvancedMaterialFineTuning.Default,
+        )
+
+        assertFalse(recipe.refraction.enabled)
+        assertEquals(0.5.dp, recipe.edgeOptics.fallbackWidth)
+        assertEquals(0.16f, recipe.edgeOptics.fallbackLightAlpha, 0.0001f)
+        assertEquals(0.10f, recipe.edgeOptics.fallbackDarkAlpha, 0.0001f)
+    }
+}

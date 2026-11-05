@@ -73,7 +73,7 @@ fun CalendarImportContent(data: SeasonData?) {
         }
     }
     LaunchedEffect(Unit) { if (permissions.all { context.checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }) loadCalendars() }
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = secondaryContentPadding()) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding()) {
         item {
             SectionTitle("${data?.season ?: "—"} 赛季", "导入系统日历")
             SettingsSection {

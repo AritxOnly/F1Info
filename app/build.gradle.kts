@@ -14,7 +14,7 @@ val releaseSigning = releaseSigningFile.takeIf { it.isFile }?.let { file ->
 android {
     namespace = "com.aritxonly.f1info"
     compileSdk = 37
-    defaultConfig { applicationId = "com.aritxonly.f1info"; minSdk = 33; targetSdk = 36; versionCode = 15; versionName = "0.5.6"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+    defaultConfig { applicationId = "com.aritxonly.f1info"; minSdk = 33; targetSdk = 36; versionCode = 16; versionName = "0.5.7"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_21; targetCompatibility = JavaVersion.VERSION_21 }
     if (releaseSigning != null) {
         signingConfigs {
@@ -27,6 +27,7 @@ android {
         }
         buildTypes { getByName("release") { signingConfig = signingConfigs.getByName("release") } }
     }
+    sourceSets.getByName("main").kotlin.srcDir(rootProject.file("third_party/miuix-glass/src/commonMain/kotlin"))
     buildFeatures { compose = true; aidl = true; buildConfig = true }
     testOptions { unitTests.isReturnDefaultValues = true }
 }

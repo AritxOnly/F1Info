@@ -1,8 +1,9 @@
 package com.aritxonly.f1info.ui.theme
 
-// Migrated from Deadliner 210e4a2d4c6bf7df291b6c6852d39366bc1fee17.
-// Integration changes: package and MIUIX semantic UI bindings only.
+// Synced from Deadliner 5499df09383e84a120e19bd0c629c6e6ffa7ef0d + local working changes (2026-10-20).
+// Integration: package and MIUIX semantic UI bindings; see docs/UPSTREAM.md.
 
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -10,7 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.luminance
+import com.aritxonly.f1info.ui.material.glass.GlassSurfaceRole
+import com.aritxonly.f1info.ui.material.glass.officialMiuixGlassMaterial
 import com.aritxonly.f1info.model.AdvancedMaterialFineTuning
+import com.aritxonly.f1info.model.GlassShadowPreset
 import com.aritxonly.f1info.model.AdvancedMaterialTuning
 import top.yukonga.miuix.kmp.blur.Backdrop
 import top.yukonga.miuix.kmp.blur.BlendColorEntry
@@ -24,6 +29,8 @@ import top.yukonga.miuix.kmp.blur.textureBlur
 @Immutable
 data class AdvancedMaterialSpec(
     val enabled: Boolean = false,
+    val useOfficialMiuixGlass: Boolean = false,
+    val shadowPreset: GlassShadowPreset = GlassShadowPreset.Default,
     val blurEnabled: Boolean = true,
     val blurRadius: Float = AdvancedMaterialTuning.DefaultBlurRadius,
     val blurRadiusX: Float? = null,
@@ -60,10 +67,14 @@ fun createAdvancedMaterialSpec(
     enabled: Boolean,
     blurRadius: Float,
     fineTuning: AdvancedMaterialFineTuning,
+    useOfficialMiuixGlass: Boolean = false,
+    shadowPreset: GlassShadowPreset = GlassShadowPreset.Default,
 ): AdvancedMaterialSpec {
     val tuning = fineTuning.normalized()
     return AdvancedMaterialSpec(
         enabled = enabled,
+        useOfficialMiuixGlass = useOfficialMiuixGlass,
+        shadowPreset = shadowPreset,
         blurRadius = AdvancedMaterialTuning.normalizeBlurRadius(blurRadius),
         noiseCoefficient = tuning.noiseCoefficient,
         blurBrightness = tuning.brightness,
@@ -86,12 +97,21 @@ fun AdvancedMaterialSpec.rememberBlurColors(
     saturation = blurSaturation,
 )
 
+@Composable
 fun Modifier.advancedTextureBlur(
     advancedMaterial: AdvancedMaterialSpec,
     backdrop: Backdrop,
     shape: Shape,
     colors: BlurColors,
-): Modifier = if (advancedMaterial.usesIndependentBlurRadii) {
+): Modifier = if (advancedMaterial.useOfficialMiuixGlass && advancedMaterial.textureBlurEnabled &&
+    top.yukonga.miuix.kmp.blur.isRuntimeShaderSupported()) {
+    officialMiuixGlassMaterial(
+        backdrop = backdrop,
+        shape = shape,
+        isDark = MiuixTheme.colorScheme.onSurface.luminance() > 0.5f,
+        role = GlassSurfaceRole.TopBar,
+    )
+} else if (advancedMaterial.usesIndependentBlurRadii) {
     textureBlur(
         backdrop = backdrop,
         shape = shape,

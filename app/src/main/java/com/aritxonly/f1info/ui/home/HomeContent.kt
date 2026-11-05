@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import com.aritxonly.f1info.ui.base.currentF1WindowLayout
+import com.aritxonly.f1info.ui.base.F1WindowLayout
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,19 +31,20 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.time.Instant
 
 fun LazyListScope.homeContent(data: SeasonData, favorites: Favorites, now: Instant,
-    onRace: (Race) -> Unit, onDriver: (Driver) -> Unit, onTeam: (Team) -> Unit, onCustomize: () -> Unit, onAccentChange: (androidx.compose.ui.graphics.Color) -> Unit, pager: PagerState) {
+    onRace: (Race) -> Unit, onDriver: (Driver) -> Unit, onTeam: (Team) -> Unit, onCustomize: () -> Unit, onAccentChange: (androidx.compose.ui.graphics.Color) -> Unit, pager: PagerState, split: Boolean) {
     item("favorites") { Column(Modifier.fillMaxWidth()) {
         val drivers = favorites.driverIds.map { id -> data.drivers.firstOrNull { it.id == id } }
         val team = data.teams.firstOrNull { it.id == favorites.teamId }
         val palette = listOf(teamBrandColor(drivers.getOrNull(0)?.teamId), teamBrandColor(drivers.getOrNull(1)?.teamId), teamBrandColor(team?.id))
+        val cover = currentF1WindowLayout() == F1WindowLayout.WideCover
         LaunchedEffect(pager, palette) {
             snapshotFlow { pager.settledPage }.collect { page -> onAccentChange(palette[page]) }
         }
         HorizontalPager(state = pager, beyondViewportPageCount = 2, modifier = Modifier.fillMaxWidth()) { page ->
-            if (page < 2) DriverHero(drivers.getOrNull(page), onDriver, onCustomize)
-            else TeamHero(team, data.season, onTeam, onCustomize)
+            if (page < 2) DriverHero(drivers.getOrNull(page), onDriver, onCustomize, cover)
+            else TeamHero(team, data.season, onTeam, onCustomize, cover)
         }
-        Row(Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 18.dp),
+        Row(Modifier.fillMaxWidth().padding(top = 4.dp, bottom = if (cover) 0.dp else 18.dp),
             horizontalArrangement = Arrangement.spacedBy(7.dp, Alignment.CenterHorizontally)) {
             repeat(3) { index ->
                 Box(Modifier.size(if (pager.currentPage == index) 24.dp else 5.dp, 5.dp)
@@ -50,6 +52,10 @@ fun LazyListScope.homeContent(data: SeasonData, favorites: Favorites, now: Insta
             }
         }
     } }
+    if (!split) weekendContent(data, now, onRace)
+}
+
+internal fun LazyListScope.weekendContent(data: SeasonData, now: Instant, onRace: (Race) -> Unit) {
     item("next") { Column(Modifier.padding(horizontal = 16.dp)) {
         val race = nextRace(data.races, now)
         SectionTitle(if (race != null) "下一个比赛周末" else "赛季回顾", "${data.season} SEASON", trailingColor = LocalRacingAccent.current.value)
@@ -77,21 +83,22 @@ fun LazyListScope.homeContent(data: SeasonData, favorites: Favorites, now: Insta
 }
 
 @Composable
-private fun DriverHero(driver: Driver?, onClick: (Driver) -> Unit, onCustomize: () -> Unit) {
+private fun DriverHero(driver: Driver?, onClick: (Driver) -> Unit, onCustomize: () -> Unit, cover: Boolean) {
     val c = MiuixTheme.colorScheme
     val accent = LocalRacingAccent.current.value
-    Box(Modifier.fillMaxWidth().heightIn(min = 440.dp).clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, role = Role.Button) { if (driver != null) onClick(driver) else onCustomize() }) {
-        Text(driver?.name?.substringBefore(" ")?.lowercase() ?: "race", fontFamily = RacingDisplayFamily, fontSize = 112.sp, fontWeight = FontWeight.SemiBold,
+    Box(Modifier.fillMaxWidth().heightIn(min = if (cover) 188.dp else 440.dp).clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, role = Role.Button) { if (driver != null) onClick(driver) else onCustomize() }) {
+        Text(driver?.name?.substringBefore(" ")?.lowercase() ?: "race", fontFamily = RacingDisplayFamily, fontSize = if (cover) 84.sp else 112.sp, fontWeight = FontWeight.SemiBold,
             letterSpacing = (-5).sp, maxLines = 1, softWrap = false, color = accent.copy(alpha = .20f),
-            modifier = Modifier.padding(start = 16.dp, top = 34.dp).fillMaxWidth())
+            modifier = Modifier.padding(start = 16.dp, top = if (cover) 0.dp else 34.dp).fillMaxWidth())
         if (driver != null) {
-            DriverPortrait(driver.id, Modifier.align(Alignment.TopEnd).padding(top = 38.dp).fillMaxWidth(.66f).height(340.dp))
+            DriverPortrait(driver.id, Modifier.align(if (cover) Alignment.CenterEnd else Alignment.TopEnd)
+                .padding(top = if (cover) 0.dp else 38.dp).fillMaxWidth(if (cover) .48f else .66f).height(if (cover) 184.dp else 340.dp))
         }
-        Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 16.dp, bottom = 12.dp)) {
+        Column(Modifier.fillMaxWidth(if (cover) .56f else 1f).padding(horizontal = 16.dp).padding(top = 16.dp, bottom = 12.dp)) {
             Text("MY PADDOCK  /  我的关注", style = MiuixTheme.textStyles.footnote2, color = c.onSurfaceVariantSummary, letterSpacing = 2.sp)
-            Spacer(Modifier.height(225.dp))
+            Spacer(Modifier.height(if (cover) 12.dp else 225.dp))
             Text(driver?.name ?: "选择你关注的车手", style = MiuixTheme.textStyles.title2, fontWeight = FontWeight.SemiBold,
-                minLines = 2, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                minLines = if (cover) 1 else 2, maxLines = 2, overflow = TextOverflow.Ellipsis)
             Text(driver?.team ?: "该车手未出现在当前赛季名单中", style = MiuixTheme.textStyles.body2, color = accent, maxLines = 1, overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = 4.dp))
             Row(Modifier.padding(top = 14.dp), horizontalArrangement = Arrangement.spacedBy(18.dp)) {
@@ -99,26 +106,27 @@ private fun DriverHero(driver: Driver?, onClick: (Driver) -> Unit, onCustomize: 
                 Text(driver?.wins?.let { "$it  胜场" } ?: "胜场待公布", style = MiuixTheme.textStyles.footnote1)
             }
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(driver?.points ?: "—", fontFamily = RacingScoreFamily, fontSize = 72.sp, fontWeight = FontWeight.SemiBold, letterSpacing = (-1).sp, maxLines = 1, softWrap = false)
-                Text("积分", modifier = Modifier.padding(start = 12.dp, bottom = 14.dp), color = c.onSurfaceVariantSummary)
+                Text(driver?.points ?: "—", fontFamily = RacingScoreFamily, fontSize = if (cover) 40.sp else 72.sp, fontWeight = FontWeight.SemiBold, letterSpacing = (-1).sp, maxLines = 1, softWrap = false)
+                Text("积分", modifier = Modifier.padding(start = 12.dp, bottom = if (cover) 6.dp else 14.dp), color = c.onSurfaceVariantSummary)
             }
         }
     }
 }
 
 @Composable
-private fun TeamHero(team: Team?, season: Int, onClick: (Team) -> Unit, onCustomize: () -> Unit) {
+private fun TeamHero(team: Team?, season: Int, onClick: (Team) -> Unit, onCustomize: () -> Unit, cover: Boolean) {
     val c = MiuixTheme.colorScheme
     val accent = LocalRacingAccent.current.value
-    Box(Modifier.fillMaxWidth().heightIn(min = 440.dp).clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, role = Role.Button) { if (team != null) onClick(team) else onCustomize() }) {
-        Text("team", fontFamily = RacingDisplayFamily, fontSize = 112.sp, fontWeight = FontWeight.SemiBold, color = accent.copy(alpha = .20f),
-            modifier = Modifier.padding(start = 16.dp, top = 34.dp), letterSpacing = (-5).sp)
-        TeamCarVisual(team?.id, season, Modifier.align(Alignment.TopEnd).padding(top = 42.dp).fillMaxWidth().height(220.dp))
-        Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 16.dp, bottom = 12.dp)) {
+    Box(Modifier.fillMaxWidth().heightIn(min = if (cover) 188.dp else 440.dp).clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, role = Role.Button) { if (team != null) onClick(team) else onCustomize() }) {
+        Text("team", fontFamily = RacingDisplayFamily, fontSize = if (cover) 84.sp else 112.sp, fontWeight = FontWeight.SemiBold, color = accent.copy(alpha = .20f),
+            modifier = Modifier.padding(start = 16.dp, top = if (cover) 0.dp else 34.dp), letterSpacing = (-5).sp)
+        TeamCarVisual(team?.id, season, Modifier.align(if (cover) Alignment.CenterEnd else Alignment.TopEnd)
+            .padding(top = if (cover) 0.dp else 42.dp).fillMaxWidth(if (cover) .47f else 1f).height(if (cover) 165.dp else 220.dp))
+        Column(Modifier.fillMaxWidth(if (cover) .56f else 1f).padding(horizontal = 16.dp).padding(top = 16.dp, bottom = 12.dp)) {
             Text("MY PADDOCK  /  我的车队", style = MiuixTheme.textStyles.footnote2, color = c.onSurfaceVariantSummary, letterSpacing = 2.sp)
-            Spacer(Modifier.height(225.dp))
+            Spacer(Modifier.height(if (cover) 12.dp else 225.dp))
             Text(team?.name ?: "选择你关注的车队", style = MiuixTheme.textStyles.title2, fontWeight = FontWeight.SemiBold,
-                minLines = 2, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                minLines = if (cover) 1 else 2, maxLines = 2, overflow = TextOverflow.Ellipsis)
             Text("CONSTRUCTORS' CHAMPIONSHIP", style = MiuixTheme.textStyles.body2, color = accent,
                 maxLines = 1, overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = 4.dp))
@@ -127,8 +135,8 @@ private fun TeamHero(team: Team?, season: Int, onClick: (Team) -> Unit, onCustom
                 Text(team?.wins?.let { "$it  胜场" } ?: "胜场待公布", style = MiuixTheme.textStyles.footnote1)
             }
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(team?.points ?: "—", fontFamily = RacingScoreFamily, fontSize = 72.sp, fontWeight = FontWeight.SemiBold, letterSpacing = (-1).sp, maxLines = 1, softWrap = false)
-                Text("积分", modifier = Modifier.padding(start = 12.dp, bottom = 14.dp), color = c.onSurfaceVariantSummary)
+                Text(team?.points ?: "—", fontFamily = RacingScoreFamily, fontSize = if (cover) 40.sp else 72.sp, fontWeight = FontWeight.SemiBold, letterSpacing = (-1).sp, maxLines = 1, softWrap = false)
+                Text("积分", modifier = Modifier.padding(start = 12.dp, bottom = if (cover) 6.dp else 14.dp), color = c.onSurfaceVariantSummary)
             }
         }
     }
@@ -137,13 +145,21 @@ private fun TeamHero(team: Team?, season: Int, onClick: (Team) -> Unit, onCustom
 @Composable
 fun NextRaceCard(race: Race, now: Instant, onClick: (Race) -> Unit) {
     SettingsSection(mainContent = true, containerAlpha = .82f) {
-        Column(Modifier.fillMaxWidth().clickable { onClick(race) }.padding(24.dp)) {
+        val compact = currentF1WindowLayout() == F1WindowLayout.WideCover
+        Column(Modifier.fillMaxWidth().clickable { onClick(race) }.padding(if (compact) 16.dp else 24.dp)) {
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 Text("ROUND %02d".format(race.round), fontFamily = RacingDisplayFamily, color = LocalRacingAccent.current.value, style = MiuixTheme.textStyles.footnote1)
                 Text(raceDate(race), style = MiuixTheme.textStyles.footnote1)
             }
-            TrackOutline(race.circuit, Modifier.fillMaxWidth().height(140.dp), prominent = true)
-            Text(race.name.removeSuffix(" Grand Prix"), style = MiuixTheme.textStyles.title1, fontWeight = FontWeight.SemiBold)
+            if (compact) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(race.name.removeSuffix(" Grand Prix"), Modifier.weight(1f), style = MiuixTheme.textStyles.title2)
+                    TrackOutline(race.circuit, Modifier.width(116.dp).height(76.dp), prominent = true)
+                }
+            } else {
+                TrackOutline(race.circuit, Modifier.fillMaxWidth().height(140.dp), prominent = true)
+                Text(race.name.removeSuffix(" Grand Prix"), style = MiuixTheme.textStyles.title1, fontWeight = FontWeight.SemiBold)
+            }
             Text(race.circuit.name, color = MiuixTheme.colorScheme.onSurfaceVariantSummary, style = MiuixTheme.textStyles.body2,
                 modifier = Modifier.padding(top = 4.dp))
             Text("正赛倒计时", style = MiuixTheme.textStyles.footnote2, modifier = Modifier.padding(top = 22.dp))

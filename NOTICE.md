@@ -7,6 +7,7 @@ F1Info source is distributed under GPL-3.0; see [LICENSE](LICENSE). Copyright ©
 | [Deadliner](https://github.com/AritxOnly/Deadliner) | Soft glass, floating tabs, progressive top bar, grouped settings and notification integration | MIT; original notice in [docs/licenses/Deadliner-MIT.txt](docs/licenses/Deadliner-MIT.txt) |
 | [HyperModifier](https://github.com/AritxOnly/HyperModifier) | Floating glow, navigation lift integration and About icon silhouette | GPL-3.0; adaptations recorded in [docs/UPSTREAM.md](docs/UPSTREAM.md) |
 | [MIUIX](https://github.com/compose-miuix-ui/miuix) | Compose UI, theme, icons, blur and navigation dependencies | Apache-2.0 |
+| [MIUIX glass PR #423](https://github.com/compose-miuix-ui/miuix/pull/423) | Vendored experimental glass dependency closure (disabled by default) | Apache-2.0; [source and license](third_party/miuix-glass/README.md) |
 | [AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) | Lens and signed-distance-field shader reference, credited in source | Apache-2.0 |
 | [OpenNote-Compose](https://github.com/YangDai2003/OpenNote-Compose) | Settings grouping reference via Deadliner | Original attribution retained in SettingsSection.kt |
 | [f1-circuits](https://github.com/bacinger/f1-circuits) | Circuit geometry | MIT; [original notice](docs/f1-circuits-LICENSE.md) |

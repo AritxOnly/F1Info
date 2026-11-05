@@ -59,7 +59,9 @@ fun TrackOutline(circuit: Circuit, modifier: Modifier = Modifier, prominent: Boo
         val minX = projected.minOf { it.x }; val minY = projected.minOf { it.y }
         val w = projected.maxOf { it.x } - minX; val h = projected.maxOf { it.y } - minY
         if (w <= 0 || h <= 0) return@Canvas
-        val margin = if (prominent) 22.dp.toPx() else 5.dp.toPx()
+        // Scale the glow and its reserved space together on compact race cards.
+        val prominence = min(1f, size.minDimension / 140.dp.toPx())
+        val margin = if (prominent) 22.dp.toPx() * prominence else 5.dp.toPx()
         val scale = min((size.width - margin * 2) / w, (size.height - margin * 2) / h)
         val dx = (size.width - w * scale) / 2; val dy = (size.height - h * scale) / 2
         val path = Path().apply { projected.forEachIndexed { index, p ->
@@ -67,10 +69,10 @@ fun TrackOutline(circuit: Circuit, modifier: Modifier = Modifier, prominent: Boo
             if (index == 0) moveTo(x, y) else lineTo(x, y)
         } }
         if (prominent) {
-            drawPath(path, accent.copy(alpha = .08f), style = Stroke(22.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
-            drawPath(path, accent.copy(alpha = .18f), style = Stroke(12.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+            drawPath(path, accent.copy(alpha = .08f), style = Stroke(22.dp.toPx() * prominence, cap = StrokeCap.Round, join = StrokeJoin.Round))
+            drawPath(path, accent.copy(alpha = .18f), style = Stroke(12.dp.toPx() * prominence, cap = StrokeCap.Round, join = StrokeJoin.Round))
         }
-        drawPath(path, if (prominent) accent else colors.onSurface, style = Stroke((if (prominent) 5.dp else 2.dp).toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+        drawPath(path, if (prominent) accent else colors.onSurface, style = Stroke(if (prominent) 5.dp.toPx() * prominence else 2.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
     }
 }
 

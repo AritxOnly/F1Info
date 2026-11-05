@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.aritxonly.f1info.data.racing.LiveCredentials
+import com.aritxonly.f1info.model.SeasonData
+import com.aritxonly.f1info.ui.racing.LiveSettingsContent
 import com.aritxonly.f1info.notification.*
 import com.aritxonly.f1info.platform.rememberHyperModifierLift
 import com.aritxonly.f1info.ui.components.*
@@ -27,7 +29,7 @@ fun SettingsContent(open: (String) -> Unit) {
         onStopOrDispose { job.cancel() }
     }
     val lift = rememberHyperModifierLift()
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = secondaryContentPadding()) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding()) {
         item {
             SectionTitle("比赛与数据")
             SettingsSection {
@@ -48,5 +50,22 @@ fun SettingsContent(open: (String) -> Unit) {
             Text("非官方 F1 信息应用", Modifier.fillMaxWidth().padding(vertical = 20.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 style = MiuixTheme.textStyles.footnote2, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
         }
+    }
+}
+
+internal val settingsTitles = mapOf(
+    "settings" to "设置", "live-settings" to "设置", "calendar" to "导入日历日程",
+    "openf1-settings" to "OpenF1 API", "island-settings" to "超级岛", "about" to "关于",
+)
+
+/** The same destinations are presented in a pane on phones and inside the settings sheet on tablets. */
+@Composable
+internal fun SettingsDestination(page: String, data: SeasonData?, open: (String) -> Unit) {
+    when (page) {
+        "settings", "live-settings" -> SettingsContent(open)
+        "calendar" -> CalendarImportContent(data)
+        "openf1-settings" -> LiveSettingsContent("openf1")
+        "island-settings" -> LiveSettingsContent("island")
+        "about" -> AboutContent()
     }
 }

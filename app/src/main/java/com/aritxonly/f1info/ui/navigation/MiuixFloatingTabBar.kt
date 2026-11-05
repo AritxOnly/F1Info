@@ -1,8 +1,16 @@
 package com.aritxonly.f1info.ui.navigation
 
-// Migrated from Deadliner 210e4a2d4c6bf7df291b6c6852d39366bc1fee17.
-// Integration changes: package and MIUIX semantic UI bindings only.
+// Adapted from Deadliner’s 2026-11-04 working tree, including the wide-cover scrolling dock.
+// Integration: package and MIUIX semantic UI bindings; see docs/UPSTREAM.md.
 
+import com.aritxonly.f1info.ui.base.feedback.DefaultClickFeedback
+import com.aritxonly.f1info.ui.base.currentF1WindowLayout
+import com.aritxonly.f1info.ui.base.F1WindowLayout
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.lerp
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
@@ -24,7 +32,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -69,7 +76,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
 import com.aritxonly.f1info.ui.material.glass.DeadlinerGlassRecipes
-import com.aritxonly.f1info.ui.material.glass.GlassMaterialInteraction
 import com.aritxonly.f1info.ui.material.glass.SoftGlassSurface
 import com.aritxonly.f1info.ui.theme.LocalAdvancedMaterialBackdrop
 import com.aritxonly.f1info.ui.theme.LocalAdvancedMaterialSpec
@@ -90,29 +96,18 @@ data class MiuixFloatingTabItem(
     val iconScale: Float = 1f,
 )
 
-enum class MiuixFloatingTabLayout {
-    Horizontal,
-    Stacked,
-}
+internal val LocalDockScrollFraction = compositionLocalOf { 0f }
 
 object MiuixFloatingTabBarDefaults {
-    val Height = 54.dp
-    // 6dp content padding - 3dp indicator overflow = the same 3dp visible edge as top/bottom.
+    val Height: Dp @Composable get() = when (currentF1WindowLayout()) {
+        F1WindowLayout.WideCover, F1WindowLayout.WideFold -> lerp(52.dp, 40.dp, LocalDockScrollFraction.current)
+        else -> 54.dp
+    }
     val HorizontalContentPadding = 6.dp
     val VerticalContentPadding = 3.dp
     val IndicatorHorizontalOverflow = 3.dp
-    val MaximumWidth = 380.dp
-    // Matches the component used by MyHyperModifier (80dp per stacked tab, 380dp panel cap).
-    val MaximumStackedItemWidth = 80.dp
-    // 26dp icon + 5dp gap + ~49dp label + 24dp breathing room.
-    val MaximumHorizontalItemWidth = 104.dp
-
-    fun maximumWidth(itemCount: Int, layout: MiuixFloatingTabLayout) = when (layout) {
-        MiuixFloatingTabLayout.Stacked -> minOf(MaximumWidth, MaximumStackedItemWidth * itemCount)
-        MiuixFloatingTabLayout.Horizontal -> MaximumHorizontalItemWidth * itemCount + HorizontalContentPadding * 2
-    }
+    fun maximumWidth(itemCount: Int) = minOf(320.dp, 72.dp * itemCount)
     val TabIconSize = 26.dp
-    val DetachedIconSize = 28.dp
 
     val ContainerShape: Shape = Capsule()
     val IndicatorShape: Shape = Capsule()
@@ -129,7 +124,6 @@ fun MiuixFloatingTabBar(
     selectedKey: String,
     onItemSelected: (MiuixFloatingTabItem) -> Unit,
     modifier: Modifier = Modifier,
-    layout: MiuixFloatingTabLayout = MiuixFloatingTabLayout.Horizontal,
     selectionVisible: Boolean = true,
     backdrop: LayerBackdrop? = LocalAdvancedMaterialBackdrop.current,
 ) {
@@ -151,11 +145,7 @@ fun MiuixFloatingTabBar(
     }
 
     val indicatorPressScale by animateFloatAsState(
-        targetValue = if (motion.isPressed) {
-            FloatingTabMotionDefaults.PressedScale
-        } else {
-            1f
-        },
+        targetValue = if (motion.isPressed) FloatingTabMotionDefaults.PressedScale else 1f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium,
@@ -174,7 +164,7 @@ fun MiuixFloatingTabBar(
     BoxWithConstraints(
         modifier = modifier
             .wrapContentWidth()
-            .widthIn(max = MiuixFloatingTabBarDefaults.maximumWidth(items.size, layout))
+            .widthIn(max = MiuixFloatingTabBarDefaults.maximumWidth(items.size))
             .fillMaxWidth()
             .height(MiuixFloatingTabBarDefaults.Height),
     ) {
@@ -210,10 +200,6 @@ fun MiuixFloatingTabBar(
                 modifier = Modifier.fillMaxSize(),
                 shape = MiuixFloatingTabBarDefaults.ContainerShape,
                 recipe = DeadlinerGlassRecipes.floatingNavigation(advancedMaterial.fineTuning),
-                interaction = GlassMaterialInteraction(
-                    refractionScale = if (motion.isPressed) 1.06f else 1f,
-                    highlightScale = if (motion.isPressed) 1.04f else 1f,
-                ),
                 backdrop = backdrop,
             ) {
                 BoxWithConstraints(
@@ -347,9 +333,7 @@ fun MiuixFloatingTabBar(
                             FloatingTabItemContent(
                                 item = item,
                                 selected = selected,
-                                selectedPressProgress = if (selected && motion.isPressed) 1f else 0f,
                                 contentColor = contentColor,
-                                layout = layout,
                                 onClick = { onItemSelected(item) },
                                 modifier = Modifier
                                     .width(itemWidth)
@@ -367,9 +351,7 @@ fun MiuixFloatingTabBar(
 private fun FloatingTabItemContent(
     item: MiuixFloatingTabItem,
     selected: Boolean,
-    selectedPressProgress: Float,
     contentColor: Color,
-    layout: MiuixFloatingTabLayout,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -381,15 +363,6 @@ private fun FloatingTabItemContent(
         targetValue = targetColor,
         label = "floating_tab_content_color",
     )
-    val animatedIconScale by animateFloatAsState(
-        targetValue = floatingTabSelectedIconScale(selectedPressProgress),
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium,
-        ),
-        label = "floating_tab_selected_icon_scale",
-    )
-
     val interactionSource = remember { MutableInteractionSource() }
     val itemModifier = modifier
         .clip(MiuixFloatingTabBarDefaults.IndicatorShape)
@@ -398,15 +371,12 @@ private fun FloatingTabItemContent(
             enabled = item.enabled,
             role = Role.Tab,
             interactionSource = interactionSource,
-            indication = null,
+            // The selected capsule owns its press animation; avoid a second Sink transform.
+            indication = if (selected) null else DefaultClickFeedback,
             onClick = onClick,
         )
     val icon: @Composable () -> Unit = {
         AnimatedContent(
-            modifier = Modifier.graphicsLayer {
-                scaleX = animatedIconScale
-                scaleY = animatedIconScale
-            },
             targetState = selected,
             transitionSpec = {
                 (fadeIn() + scaleIn(initialScale = 0.88f))
@@ -432,35 +402,18 @@ private fun FloatingTabItemContent(
         Text(
             text = item.label,
             color = animatedContentColor,
-            style = when (layout) {
-                MiuixFloatingTabLayout.Horizontal -> MiuixTheme.textStyles.footnote1
-                MiuixFloatingTabLayout.Stacked -> MiuixTheme.textStyles.footnote2.copy(
-                    fontSize = 10.sp,
-                    lineHeight = 11.sp,
-                )
-            },
-            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+            style = MiuixTheme.textStyles.footnote2.copy(fontSize = 10.sp, lineHeight = 11.sp),
+            fontWeight = if (selected && !currentF1WindowLayout().fixedHeader) FontWeight.SemiBold else FontWeight.Medium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
     }
 
-    when (layout) {
-        MiuixFloatingTabLayout.Horizontal -> Row(
-            modifier = itemModifier.padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            icon()
-            Spacer(modifier = Modifier.width(5.dp))
-            label()
-        }
-
-        MiuixFloatingTabLayout.Stacked -> Column(
-            modifier = itemModifier.padding(horizontal = 2.dp, vertical = 2.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
+    if (LocalDockScrollFraction.current > 0.01f) {
+        Box(itemModifier.semantics { contentDescription = item.label }, contentAlignment = Alignment.Center) { icon() }
+    } else {
+        Column(itemModifier.padding(2.dp), horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
             icon()
             label()
         }

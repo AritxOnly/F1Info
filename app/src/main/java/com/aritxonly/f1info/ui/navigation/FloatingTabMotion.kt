@@ -1,7 +1,7 @@
 package com.aritxonly.f1info.ui.navigation
 
-// Migrated from Deadliner 210e4a2d4c6bf7df291b6c6852d39366bc1fee17.
-// Integration changes: package and MIUIX semantic UI bindings only.
+// Synced from Deadliner 9119af22827e15d4b5b3bea7d938f865800ee1da + local working changes (2026-10-25).
+// Integration: package and MIUIX semantic UI bindings; see docs/UPSTREAM.md.
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
@@ -19,12 +19,6 @@ internal object FloatingTabMotionDefaults {
     const val MaximumStretch = 0.18f
     const val FullStretchTabsPerSecond = 8f
     const val MaximumPanelOffsetDp = 4f
-    const val SelectedIconPressedScale = 0.90f
-}
-
-internal fun floatingTabSelectedIconScale(pressProgress: Float): Float {
-    val progress = pressProgress.coerceIn(0f, 1f)
-    return 1f + (FloatingTabMotionDefaults.SelectedIconPressedScale - 1f) * progress
 }
 
 internal fun floatingTabPanelDragFraction(

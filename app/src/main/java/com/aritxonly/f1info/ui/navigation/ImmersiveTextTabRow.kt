@@ -82,6 +82,7 @@ fun ImmersiveTextTabRow(
     modifier: Modifier = Modifier,
     materialProgress: Float? = null,
     backdrop: LayerBackdrop? = LocalAdvancedMaterialBackdrop.current,
+    leadingControl: (@Composable () -> Unit)? = null,
 ) {
     if (tabs.isEmpty()) return
 
@@ -142,7 +143,8 @@ fun ImmersiveTextTabRow(
                         .fillMaxSize()
                         .padding(ImmersiveTextTabRowDefaults.ContentPadding),
                 ) {
-                    val itemWidth = maxWidth / tabs.size
+                    val leadingWidth = if (leadingControl == null) 0.dp else 42.dp
+                    val itemWidth = (maxWidth - leadingWidth).coerceAtLeast(0.dp) / tabs.size
                     val indicatorColor = if (isDark) {
                         contentColor.copy(alpha = 0.13f)
                     } else {
@@ -151,7 +153,7 @@ fun ImmersiveTextTabRow(
 
                     Box(
                         modifier = Modifier
-                            .offset(x = itemWidth * selectionPosition)
+                            .offset(x = leadingWidth + itemWidth * selectionPosition)
                             .width(itemWidth)
                             .fillMaxHeight()
                             .clip(SoftGlassDefaults.Shape)
@@ -164,6 +166,7 @@ fun ImmersiveTextTabRow(
                             .selectableGroup(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        if (leadingControl != null) Box(Modifier.width(leadingWidth), contentAlignment = Alignment.Center) { leadingControl() }
                         tabs.forEachIndexed { index, title ->
                             val selected = index == resolvedSelectedIndex
                             val textColor by animateColorAsState(

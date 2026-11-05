@@ -1,14 +1,14 @@
 package com.aritxonly.f1info.model
 
-// Migrated from Deadliner 210e4a2d4c6bf7df291b6c6852d39366bc1fee17.
-// Integration changes: package and MIUIX semantic UI bindings only.
+// Synced from Deadliner 5499df0 + local working changes, 2026-10-20.
+// AppearancePreferences mutation entry points omitted; F1Info owns its appearance state.
 
 import kotlin.math.abs
 
 object AdvancedMaterialTuning {
-    const val MinBlurRadius = 28f
-    const val DefaultBlurRadius = 92f
-    const val MaxBlurRadius = 256f
+    const val MinBlurRadius = 16f
+    const val DefaultBlurRadius = 84f
+    const val MaxBlurRadius = 168f
     fun normalizeBlurRadius(value: Float): Float = if (value.isFinite()) {
         value.coerceIn(MinBlurRadius, MaxBlurRadius)
     } else {
@@ -19,7 +19,8 @@ object AdvancedMaterialTuning {
         val radius = normalizeBlurRadius(value)
         val levels = AdvancedMaterialLevel.entries
         val upperIndex = levels.indexOfFirst { radius <= it.blurRadius }
-        if (upperIndex <= 0) return levels.first().blurSaturation
+        if (upperIndex < 0) return levels.last().blurSaturation
+        if (upperIndex == 0) return levels.first().blurSaturation
 
         val upper = levels[upperIndex]
         val lower = levels[upperIndex - 1]

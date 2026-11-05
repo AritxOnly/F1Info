@@ -27,7 +27,7 @@ fun LiveSessionsContent(season: Int, onSelected: () -> Unit) {
         try { rows = LiveFeed.sessions(year) } catch (e: Exception) { if (e is kotlinx.coroutines.CancellationException) throw e; error = e.message }
         loading = false
     }
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = secondaryContentPadding()) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding()) {
         item {
             val seasons = (season downTo 2023).toList()
             SettingsSection {

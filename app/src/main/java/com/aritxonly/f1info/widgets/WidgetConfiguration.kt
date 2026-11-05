@@ -20,7 +20,7 @@ enum class WidgetMarginPreset(val label: String, val cardTopMarginDp: Int, val c
 /** Per-instance values. topPadding/bottomPadding are retained storage-compatible custom margin drafts. */
 data class WidgetConfiguration(val opacity: Float = .96f, val topPadding: Int = 0,
     val bottomPadding: Int = 0, val driverId: String = "", val lightText: Boolean = true,
-    val marginPreset: WidgetMarginPreset = WidgetMarginPreset.Default, val cornerRadiusDp: Int = 22) {
+    val marginPreset: WidgetMarginPreset = WidgetMarginPreset.Default, val cornerRadiusDp: Int = 22) : java.io.Serializable {
     fun topMarginDp() = if (marginPreset == WidgetMarginPreset.Custom) topPadding else marginPreset.cardTopMarginDp
     fun bottomMarginDp() = if (marginPreset == WidgetMarginPreset.Custom) bottomPadding else marginPreset.cardBottomMarginDp
     fun normalized(): WidgetConfiguration {

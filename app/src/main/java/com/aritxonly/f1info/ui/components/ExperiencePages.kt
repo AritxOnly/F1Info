@@ -15,7 +15,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 /** About composition follows Deadliner: floating glow, centered identity, translucent information groups. */
 @Composable
 fun AboutContent() {
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = secondaryContentPadding()) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding()) {
         item {
             Column(Modifier.fillMaxWidth().padding(vertical = 36.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 androidx.compose.foundation.Image(androidx.compose.ui.res.painterResource(com.aritxonly.f1info.R.drawable.ic_about_f1info), "F1Info 应用图标", Modifier.size(88.dp))

@@ -24,7 +24,7 @@ fun ResultsContent(season: Int, round: Int, category: Int) {
         result = ResultsRepository.load(context, season, round, listOf("results", "qualifying", "sprint")[category])
         loading = false
     }
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = secondaryContentPadding()) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding()) {
         item {
             Text("$season · ROUND $round", fontFamily = RacingDisplayFamily, color = MiuixTheme.colorScheme.primary)
             if (loading) CircularProgressIndicator(Modifier.padding(20.dp))

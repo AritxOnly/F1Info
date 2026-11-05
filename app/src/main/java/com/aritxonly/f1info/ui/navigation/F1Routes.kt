@@ -1,5 +1,7 @@
 package com.aritxonly.f1info.ui.navigation
 
+import com.aritxonly.f1info.model.*
+import java.time.Instant
 import androidx.compose.runtime.saveable.Saver
 import top.yukonga.miuix.kmp.nav.core.NavBackStack
 import top.yukonga.miuix.kmp.nav.core.NavKey
@@ -24,3 +26,24 @@ val F1RouteStackSaver = Saver<NavBackStack, ArrayList<String>>(
         }
     }.toTypedArray()) },
 )
+
+// The initial detail belongs to the filtered list and does not add a synthetic back-stack entry.
+internal fun defaultTabletDetail(tab: String, data: SeasonData?, filter: Int, category: Int, now: Instant): DetailRoute? {
+    data ?: return null
+    return when (tab) {
+        "schedule" -> {
+            val race = when (filter) {
+                1 -> nextRace(data.races, now)
+                2 -> data.races.filter { it.isFinished(now) }.maxByOrNull { it.date }
+                else -> nextRace(data.races, now) ?: data.races.maxByOrNull { it.date }
+            }
+            race?.let { DetailRoute("race", it.round.toString()) }
+        }
+        "standings" -> if (category == 0) {
+            data.drivers.firstOrNull { it.position != null }?.let { DetailRoute("driver", it.id) }
+        } else {
+            data.teams.firstOrNull { it.position != null }?.let { DetailRoute("team", it.id) }
+        }
+        else -> null
+    }
+}

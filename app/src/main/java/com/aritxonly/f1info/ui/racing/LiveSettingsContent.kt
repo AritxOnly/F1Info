@@ -41,7 +41,7 @@ fun LiveSettingsContent(section: String = "openf1") {
         Shizuku.addRequestPermissionResultListener(listener)
         onDispose { Shizuku.removeRequestPermissionResultListener(listener) }
     }
-    LazyColumn(Modifier.fillMaxSize().imePadding(), contentPadding = secondaryContentPadding()) {
+    LazyColumn(Modifier.fillMaxSize().imePadding(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding()) {
         item {
             if (section == "openf1") {
             SectionTitle("OpenF1 授权", if (authorized) "已保存授权" else "历史数据无需登录")

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -22,7 +23,7 @@ import java.time.ZoneId
 @Composable
 fun RaceDetailContent(race: Race?, onResults: (Race) -> Unit = {}, onLive: () -> Unit = {}) {
     val uri = LocalUriHandler.current
-    race?.let { r -> LazyColumn(Modifier.fillMaxSize(), contentPadding = secondaryContentPadding(8.dp)) {
+    race?.let { r -> LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding(8.dp)) {
             item {
                 Text("${r.season} · 第 ${r.round} 轮", color = MiuixTheme.colorScheme.primary, style = MiuixTheme.textStyles.footnote1)
                 Text(r.name, style = MiuixTheme.textStyles.title2, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 8.dp))
@@ -62,7 +63,7 @@ fun RaceDetailContent(race: Race?, onResults: (Race) -> Unit = {}, onLive: () ->
 fun EntityDetailContent(driver: Driver?, team: Team?,
     favorites: Favorites, data: SeasonData?, onFavorites: (Favorites) -> Unit) {
     val uri = LocalUriHandler.current
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = secondaryContentPadding()) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = secondaryContentPadding()) {
         item { Column(Modifier.fillMaxWidth()) {
             val accent = LocalRacingAccent.current.value
             Box(Modifier.fillMaxWidth().height(280.dp)) {
@@ -123,17 +124,22 @@ private fun DetailFollowControl(driver: Driver?, team: Team?, favorites: Favorit
 
 @Composable
 fun FavoritesDetailContent(data: SeasonData?, current: Favorites, onDismiss: () -> Unit, onSave: (Favorites) -> Unit, category: Int) {
-    var ids by remember { mutableStateOf(current.driverIds) }
-    var teamId by remember { mutableStateOf(current.teamId) }
-    var hint by remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(Unit) {
-        ids = current.driverIds.filter { id -> data?.drivers?.any { it.id == id } == true }
-        teamId = current.teamId.takeIf { id -> data?.teams?.any { it.id == id } == true }.orEmpty()
-        hint = if (ids.size != current.driverIds.size || teamId != current.teamId) "部分关注未出现在当前赛季，请重新选择。" else null
+    var ids by rememberSaveable { mutableStateOf(current.driverIds) }
+    var teamId by rememberSaveable { mutableStateOf(current.teamId) }
+    var hint by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(data) {
+        if (data != null) {
+            val availableIds = ids.filter { id -> data.drivers.any { it.id == id } }
+            if (availableIds != ids || (teamId.isNotEmpty() && data.teams.none { it.id == teamId })) {
+                ids = availableIds
+                if (data.teams.none { it.id == teamId }) teamId = ""
+                hint = "部分关注未出现在当前赛季，请重新选择。"
+            }
+        }
     }
     val valid = ids.size == 2 && ids.distinct().size == 2 && data?.drivers?.map { it.id }?.containsAll(ids) == true && data.teams.any { it.id == teamId }
     val padding = secondaryContentPadding()
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(top = padding.calculateTopPadding(), bottom = padding.calculateBottomPadding())) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = PaddingValues(top = padding.calculateTopPadding(), bottom = padding.calculateBottomPadding())) {
         item {
             Text("关注两名车手和一支车队，积分卡片会显示在首页。", style = MiuixTheme.textStyles.body2,
                 color = MiuixTheme.colorScheme.onSurfaceVariantSummary, modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp))

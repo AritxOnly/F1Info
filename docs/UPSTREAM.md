@@ -83,3 +83,34 @@ Glance 用系统 Normal / Medium，数字与名称分层，保留中性 MIUIX �
 0.5.5 关于图标：采用 HyperModifier `ui/SystemFeatureSettingsPages.kt` 的 AboutAppHeader 专用矢量方案，沿用 `res/drawable/ic_about_hypermodifier.xml` 背景连续圆角路径（28×28），等比例映射到 F1Info 108×108 矢量。F1Info 原品牌颜色与标识保留，新增 `ic_about_f1info.xml`，不修改桌面 adaptive-icon。
 
 0.5.6 小组件外边距：参考 Deadliner `widgets/glance/preferences/TaskWidgetPreferences.kt` 的预设语义、`TaskWidgetConfiguration.kt` 的8–32dp圆角、单侧28dp/合计40dp限制，以及 `ui/CompactTaskGlanceWidget.kt` 外层留白 + `TaskWidgetComponents.kt` 背景Image圆角分层。F1Info新增用户指定的4×6无字18/2预设；未设置新版预设的旧内容padding不直接迁移为背景外边距，自定义草稿保留。实际RemoteViews预览使用矩形裁切边界，不用固定圆角掩盖背景自定义值。
+
+
+## 2026-10-20 柔光玻璃同步
+
+- 来源：本机 Deadliner `5499df09383e84a120e19bd0c629c6e6ffa7ef0d` 的工作区，包含当时尚未提交的 `GlassShadowPreset`、阴影宿主及材质参数变更。同步时的原文件 SHA-256 记录于 `docs/deadliner-glass-source.json`，后续可据此区分上游提交与本地更新。
+- 完整同步现用光学链：材质默认值/归一化、模糊等级和范围（默认 84）、采样 padding、折射 shader、连续亮边、三层漫射阴影及顶栏外置阴影宿主；按上游改用 MIUIX SinkFeedback。移除已无调用的旧 soft-glass press helpers。
+- `FloatingNavigationEdgeMask` 来自 `ui/base/ImmersiveMiuixCompactNavigationScaffold.kt`，依赖完整 `EdgeFade.kt`。覆盖高度为 54dp 底栏 + 4dp 间距 + 32dp 延伸 + navigationBars inset + HyperModifier 抬升量。背景取 MIUIX surface，自上而下透明渐进；作为页面 recorder 的兄弟层，先于导航胶囊绘制，不占触摸区域。
+- 本地适配保留：包名、MIUIX 语义色/文字/图标，导航内容颜色使用 onSurfaceContainer，指示器沿用 layout-phase offset lambda。未迁入 Deadliner 设置页、实验室 UI 或 AppearancePreferences 的修改入口。
+- 为保持材质依赖闭包，保留上游官方玻璃实验分支及其 vendor source，默认 `useOfficialMiuixGlass=false`，不添加实验开关。`third_party/miuix-glass` 为 MIUIX PR #423 / `ec4c96963abf206ab2f2b0253a5efca71ba28043` 的固定源码、Apache-2.0 LICENSE 与 hashes；完全沿用 Deadliner 已有拆分，不改 shader 或 token。
+- MIUIX 仍为 0.9.4-rc01；Compose UI/Foundation/Animation 仍为 1.12.0。本次不升级库。
+
+
+## 2026-10-25 底栏按压反馈同步
+
+对照 Deadliner `9119af22827e15d4b5b3bea7d938f865800ee1da` 工作区与上次来源哈希，现用依赖只有 `MiuixFloatingTabBar.kt` / `FloatingTabMotion.kt` 发生变化，且新反馈仍为未提交修改。本次完整同步这两处差异：按压选中胶囊时按 52/56 比例缩小，使用 MediumBouncy / Medium 弹簧恢复；横向速度拉伸与按压比例相乘。选中项关闭额外 SinkFeedback，未选中项继续保留。F1Info 的语义颜色、layout-phase offset 与底部 EdgeMask 集成保留。
+
+其他现用材质、shader、阴影、顶栏与 EdgeFade 文件的来源哈希均未变化，故保持原实现。当前 MIUIX 0.9.4-rc01 / Compose 1.12.0 不变。迁入上游五项导航运动逻辑回归测试。最新来源哈希仍记录于 `deadliner-glass-source.json`。
+
+## 2026-11-04 阔折叠与平板
+
+窗口策略、固定 TopAppBar、外屏滚动底栏和平板导航同步自 Android Deadliner 本地工作树（HEAD `3b561656` 及其未提交的 `WideFoldTopAppBar.kt`、`ImmersiveMiuixCompactNavigationScaffold.kt`、`TabletNavigationScaffold.kt`）。MIUIX 版本沿用 0.9.4-rc01。固定标题模式使用列表的实际滚动位置驱动玻璃，并在下拉刷新和列表两处解除顶栏滚动连接。
+
+F1 的扩展窗口使用同一路由栈显示两个内容栏。横竖屏均为停靠侧栏，展开时重新分配正文宽度。顶部导航、侧栏与左右内容共享同一张全窗浮光背景。首页左栏保留关注车手与车队的横滑海报，右栏显示周末安排，赛程和积分榜配对当前筛选下的赛事或榜首详情，Live 配对赛会动态。
+
+宽屏顶栏沿用 Deadliner 的叠层方式。窗口背景和两栏正文一同录入 LayerBackdrop，最外层 ProgressiveTopBarMaterial 承载页面标题、导航与操作控件。列表仅在 contentPadding 中预留顶栏安全区；两栏实际滚动位置共同驱动顶栏玻璃，Live 与其他标签共用同一行高。
+
+### 0.5.7 交互与外屏修正
+
+宽屏设置及其子页使用根 Scaffold 承载的 Sheet，关闭后保留原页面及选择。赛程和积分榜的双栏选择不显示返回按钮；比赛结果等进一步导航保留返回行为。侧栏收起时导航胶囊相对于整个窗口居中。
+
+仅阔折叠外屏采用紧凑的左右海报排版，保留车手和车队图像及分页。主页不显示标题文字。外屏下一场比赛赛道画布扩大至 116×76dp，强调赛道的边距、描边和光晕按画布短边缩放，避免固定边距挤压小画布中的赛道。

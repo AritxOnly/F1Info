@@ -1,7 +1,7 @@
 package com.aritxonly.f1info.ui.material.glass
 
-// Migrated from Deadliner 210e4a2d4c6bf7df291b6c6852d39366bc1fee17.
-// Integration changes: package and MIUIX semantic UI bindings only.
+// Synced from Deadliner 5499df09383e84a120e19bd0c629c6e6ffa7ef0d + local working changes (2026-10-20).
+// Integration: package and MIUIX semantic UI bindings; see docs/UPSTREAM.md.
 
 import androidx.compose.runtime.getValue
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -19,6 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -116,10 +120,14 @@ fun ProgressiveTopBarMaterial(
             CompositionLocalProvider(
                 LocalProgressiveTopBarMaterialHosted provides true,
             ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    content = content,
-                )
+                // Include custom and raw MIUIX headers, outside their clipping/transition layers.
+                // This foreground is drawn after the progressive backdrop, never into its recorder.
+                TopBarGlassShadowHost {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        content = content,
+                    )
+                }
             }
         }.map { measurable ->
             measurable.measure(constraints.copy(minHeight = 0))
@@ -162,6 +170,30 @@ private fun ProgressiveTopBarBackground(
     val surface = MiuixTheme.colorScheme.surface
     val advancedMaterial = LocalAdvancedMaterialSpec.current
     val backdrop = LocalAdvancedMaterialBackdrop.current
+    if (advancedMaterial.useOfficialMiuixGlass && advancedMaterial.textureBlurEnabled &&
+        backdrop != null && top.yukonga.miuix.kmp.blur.isRuntimeShaderSupported()) {
+        // Keep the app's edge fade and scroll ownership, with the official action-bar body.
+        Box(modifier.graphicsLayer {
+            alpha = materialProgress
+            compositingStrategy = CompositingStrategy.Offscreen
+        }.drawWithContent {
+            drawContent()
+            drawRect(
+                brush = Brush.verticalGradient(
+                    0f to Color.White,
+                    ProgressiveTopBarBlurFadeStart to Color.White,
+                    1f to Color.Transparent,
+                ),
+                blendMode = BlendMode.DstIn,
+            )
+        }.officialMiuixGlassMaterial(
+            backdrop = backdrop,
+            shape = RectangleShape,
+            isDark = MiuixTheme.colorScheme.onSurface.luminance() > 0.5f,
+            role = GlassSurfaceRole.TopBar,
+        ))
+        return
+    }
     Box(
         modifier = modifier.graphicsLayer(alpha = materialProgress),
     ) {

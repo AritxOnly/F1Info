@@ -1,5 +1,6 @@
 package com.aritxonly.f1info.widgets
 
+import com.aritxonly.f1info.ui.components.LocalSecondaryListState
 import android.widget.FrameLayout
 import android.widget.RemoteViews
 import androidx.glance.appwidget.compose
@@ -45,7 +46,7 @@ fun WidgetPreviewGallery(category: Int, revision: Instant?) {
             android.util.Log.e("F1WidgetPreview", "Widget composition failed", it); error = true
         }
     }
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = com.aritxonly.f1info.ui.components.secondaryContentPadding()) {
+    LazyColumn(Modifier.fillMaxSize(), state = LocalSecondaryListState.current, contentPadding = com.aritxonly.f1info.ui.components.secondaryContentPadding()) {
         item {
             Text("与桌面相同，显示最近刷新的比赛和积分。", style = MiuixTheme.textStyles.footnote2,
                 color = MiuixTheme.colorScheme.onSurfaceVariantSummary)

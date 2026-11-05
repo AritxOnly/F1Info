@@ -24,7 +24,7 @@ import top.yukonga.miuix.kmp.icon.extended.*
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 fun LazyListScope.standingsContent(data: SeasonData, favorites: Favorites, category: Int,
-    onDriver: (Driver) -> Unit, onTeam: (Team) -> Unit) {
+    onDriver: (Driver) -> Unit, onTeam: (Team) -> Unit, split: Boolean, selectedId: String?) {
     val rankedDrivers = data.drivers.filter { it.position != null }
     val rankedTeams = data.teams.filter { it.position != null }
     if ((category == 0 && rankedDrivers.isEmpty()) || (category == 1 && rankedTeams.isEmpty())) {
@@ -35,15 +35,15 @@ fun LazyListScope.standingsContent(data: SeasonData, favorites: Favorites, categ
                 color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
         } } } }
     } else {
-        item("leader") { Column(Modifier.padding(horizontal = 16.dp)) {
+        if (!split) item("leader") { Column(Modifier.padding(horizontal = 16.dp)) {
             val driver = if (category == 0) rankedDrivers.first() else null
             val team = if (category == 1) rankedTeams.first() else null
             CompositionLocalProvider(LocalRacingAccent provides rememberUpdatedState(teamBrandColor(driver?.teamId ?: team?.id))) { LeaderHero(driver, team, data.season, { driver?.let(onDriver); team?.let(onTeam) }) }
         } }
         if (category == 0) items(rankedDrivers, key = { it.id }) { d ->
-            StandingRow(teamBrandColor(d.teamId), d.position, d.name, d.team, d.points, d.id in favorites.driverIds, { onDriver(d) }) { DriverNumberIcon(d.id, d.number, Modifier.size(38.dp, 32.dp)) }
+            StandingRow(teamBrandColor(d.teamId), d.position, d.name, d.team, d.points, d.id in favorites.driverIds, d.id == selectedId, { onDriver(d) }) { DriverNumberIcon(d.id, d.number, Modifier.size(38.dp, 32.dp)) }
         } else items(rankedTeams, key = { it.id }) { t ->
-            StandingRow(teamBrandColor(t.id), t.position, t.name, t.nationality, t.points, t.id == favorites.teamId, { onTeam(t) }) { TeamLogo(t.id, Modifier.size(38.dp, 32.dp)) }
+            StandingRow(teamBrandColor(t.id), t.position, t.name, t.nationality, t.points, t.id == favorites.teamId, t.id == selectedId, { onTeam(t) }) { TeamLogo(t.id, Modifier.size(38.dp, 32.dp)) }
         }
     }
 }
@@ -69,8 +69,8 @@ private fun LeaderHero(driver: Driver?, team: Team?, season: Int, onClick: () ->
 }
 
 @Composable
-private fun StandingRow(accent: androidx.compose.ui.graphics.Color, position: Int?, name: String, summary: String, points: String?, followed: Boolean, onClick: () -> Unit, identity: @Composable () -> Unit) {
-    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 22.dp),
+private fun StandingRow(accent: androidx.compose.ui.graphics.Color, position: Int?, name: String, summary: String, points: String?, followed: Boolean, selected: Boolean, onClick: () -> Unit, identity: @Composable () -> Unit) {
+    Row(Modifier.fillMaxWidth().background(if (selected) accent.copy(alpha = .09f) else androidx.compose.ui.graphics.Color.Transparent).clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 22.dp),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(position?.let { "%02d".format(it) } ?: "—", fontFamily = RacingDisplayFamily, style = MiuixTheme.textStyles.title3,
             modifier = Modifier.width(32.dp), fontWeight = FontWeight.Medium)

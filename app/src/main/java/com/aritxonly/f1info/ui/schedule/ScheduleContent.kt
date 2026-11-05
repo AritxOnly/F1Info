@@ -1,5 +1,6 @@
 package com.aritxonly.f1info.ui.schedule
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
@@ -18,20 +19,20 @@ import top.yukonga.miuix.kmp.icon.extended.ChevronForward
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.time.Instant
 
-fun LazyListScope.scheduleContent(data: SeasonData, now: Instant, filter: Int, onRace: (Race) -> Unit) {
-    if (filter != 2) nextRace(data.races, now)?.let { race -> item("upcoming") { Column(Modifier.padding(horizontal = 16.dp)) {
+fun LazyListScope.scheduleContent(data: SeasonData, now: Instant, filter: Int, onRace: (Race) -> Unit, split: Boolean, selectedId: String?) {
+    if (!split && filter != 2) nextRace(data.races, now)?.let { race -> item("upcoming") { Column(Modifier.padding(horizontal = 16.dp)) {
         SectionTitle("即将举行")
         NextRaceCard(race, now, onRace)
     } } }
     item("heading") { Column(Modifier.padding(horizontal = 16.dp)) { SectionTitle(when (filter) { 1 -> "接下来的比赛"; 2 -> "已结束的比赛"; else -> "完整赛历" }) } }
     val races = data.races.filter { when (filter) { 1 -> !it.isFinished(now); 2 -> it.isFinished(now); else -> true } }
     if (races.isEmpty()) item("empty") { Column(Modifier.padding(horizontal = 16.dp)) { Text("暂无符合条件的比赛", modifier = Modifier.padding(24.dp)) } }
-    items(races, key = { "race-${it.round}" }) { race -> RaceRow(race, now, onRace) }
+    items(races, key = { "race-${it.round}" }) { race -> RaceRow(race, now, race.round.toString() == selectedId, onRace) }
 }
 
 @Composable
-private fun RaceRow(race: Race, now: Instant, onClick: (Race) -> Unit) {
-    Row(Modifier.fillMaxWidth().clickable { onClick(race) }.padding(horizontal = 16.dp, vertical = 22.dp),
+private fun RaceRow(race: Race, now: Instant, selected: Boolean, onClick: (Race) -> Unit) {
+    Row(Modifier.fillMaxWidth().background(if (selected) MiuixTheme.colorScheme.primary.copy(alpha = .09f) else androidx.compose.ui.graphics.Color.Transparent).clickable { onClick(race) }.padding(horizontal = 16.dp, vertical = 22.dp),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
         Column(Modifier.width(40.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("%02d".format(race.start?.atZone(java.time.ZoneId.systemDefault())?.dayOfMonth ?: race.date.dayOfMonth),
